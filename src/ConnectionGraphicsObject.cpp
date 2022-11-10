@@ -411,5 +411,10 @@ addGraphicsEffect()
   //effect->setColor(QColor(Qt::gray).darker(800));
 }
 
+void
+ConnectionGraphicsObject::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
+{
+  Q_EMIT nodeScene()->connectionContextMenu(_connectionId, mapToScene(event->pos()));
+}
 
 }

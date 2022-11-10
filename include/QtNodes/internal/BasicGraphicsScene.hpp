@@ -141,6 +141,9 @@ Q_SIGNALS:
   nodeContextMenu(NodeId const nodeId, QPointF const pos);
 
   void
+  connectionContextMenu(ConnectionId const connectionId, QPointF const pos);
+
+  void
   selectionRemoved();
 
   void
