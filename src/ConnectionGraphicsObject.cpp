@@ -414,6 +414,11 @@ addGraphicsEffect()
 void
 ConnectionGraphicsObject::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
 {
+  if (!flags().testFlag(QGraphicsItem::ItemIsSelectable))
+  {
+    return;
+  }
+
   Q_EMIT nodeScene()->connectionContextMenu(_connectionId, mapToScene(event->pos()));
 }
 
