@@ -496,7 +496,7 @@ void
 NodeGraphicsObject::
 contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
 {
-  if (_nodeState.locked())
+  if (_nodeState.locked() || _nodeState.isRoot())
     return;
 
   Q_EMIT nodeScene()->nodeContextMenu(_nodeId, mapToScene(event->pos()));
