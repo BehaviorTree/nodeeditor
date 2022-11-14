@@ -95,6 +95,7 @@ private:
   mutable unsigned int _defaultOutPortWidth;
   mutable unsigned int _entryHeight;
   unsigned int _verticalSpacing;
+  unsigned int _horizontalMargin;
   mutable QFontMetrics _fontMetrics;
   mutable QFontMetrics _boldFontMetrics;
 };

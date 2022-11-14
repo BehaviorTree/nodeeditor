@@ -21,6 +21,7 @@ NodeGeometry(NodeGraphicsObject const& ngo)
   , _defaultOutPortWidth(70)
   , _entryHeight(20)
   , _verticalSpacing(20)
+  , _horizontalMargin(4)
   , _fontMetrics(QFont())
   , _boldFontMetrics(QFont())
 {
@@ -111,7 +112,7 @@ recalculateSize() const
   unsigned int inPortWidth = portWidth(PortType::In);
   unsigned int outPortWidth = portWidth(PortType::Out);
 
-  unsigned int width = inPortWidth + outPortWidth + 2 * _verticalSpacing;
+  unsigned int width = inPortWidth + outPortWidth + 2 * _horizontalMargin;
 
   if (auto w = _graphModel.nodeData(nodeId, NodeRole::Widget).value<QWidget*>())
   {
@@ -284,11 +285,11 @@ widgetPosition() const
     // place it immediately after the caption.
     if (w->sizePolicy().verticalPolicy() & QSizePolicy::ExpandFlag)
     {
-      return QPointF(_verticalSpacing + portWidth(PortType::In), captionHeight());
+      return QPointF(_horizontalMargin + portWidth(PortType::In), captionHeight());
     }
     else
     {
-      return QPointF(_verticalSpacing + portWidth(PortType::In),
+      return QPointF(_horizontalMargin + portWidth(PortType::In),
                      (captionHeight() + size.height() - w->height()) / 2.0);
     }
   }
