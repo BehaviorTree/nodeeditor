@@ -26,10 +26,6 @@ public:
   ~DataFlowGraphicsScene() = default;
 
 public:
-  std::vector<NodeId>
-  selectedNodes() const;
-
-public:
   QMenu *
   createSceneMenu(QPointF const scenePos) override;
 

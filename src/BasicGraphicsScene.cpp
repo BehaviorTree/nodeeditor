@@ -202,6 +202,23 @@ createSceneMenu(QPointF const scenePos)
   return nullptr;
 }
 
+std::vector<NodeId> BasicGraphicsScene::selectedNodes() const
+{
+  QList<QGraphicsItem*> graphicsItems = selectedItems();
+
+  std::vector<NodeId> result;
+  result.reserve(graphicsItems.size());
+
+  for (QGraphicsItem* item : graphicsItems)
+  {
+    if (auto ngo = qgraphicsitem_cast<NodeGraphicsObject*>(item))
+    {
+      result.push_back(ngo->nodeId());
+    }
+  }
+  return result;
+}
+
 void
 BasicGraphicsScene::
 cleanupSceneMenu(QMenu* menu)

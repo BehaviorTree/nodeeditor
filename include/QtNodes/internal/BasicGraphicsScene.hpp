@@ -115,6 +115,8 @@ public:
   void
   cleanupSceneMenu(QMenu *menu);
 
+  std::vector<NodeId> selectedNodes() const;
+
 Q_SIGNALS:
 
   void

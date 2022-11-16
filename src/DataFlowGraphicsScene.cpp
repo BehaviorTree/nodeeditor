@@ -47,28 +47,6 @@ DataFlowGraphicsScene(DataFlowGraphModel& graphModel,
 
 //---------------------------------------------------------------------
 
-std::vector<NodeId>
-DataFlowGraphicsScene::
-selectedNodes() const
-{
-  QList<QGraphicsItem*> graphicsItems = selectedItems();
-
-  std::vector<NodeId> result;
-  result.reserve(graphicsItems.size());
-
-  for (QGraphicsItem* item : graphicsItems)
-  {
-    auto ngo = qgraphicsitem_cast<NodeGraphicsObject*>(item);
-
-    if (ngo != nullptr)
-    {
-      result.push_back(ngo->nodeId());
-    }
-  }
-
-  return result;
-}
-
 
 QMenu*
 DataFlowGraphicsScene::
