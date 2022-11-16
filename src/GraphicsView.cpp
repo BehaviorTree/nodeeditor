@@ -158,6 +158,8 @@ contextMenuEvent(QContextMenuEvent *event)
   {
     menu->exec(event->globalPos());
   }
+
+  nodeScene()->cleanupSceneMenu(menu);
 }
 
 

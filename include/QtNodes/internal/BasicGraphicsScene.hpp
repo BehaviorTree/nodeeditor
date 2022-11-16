@@ -110,6 +110,11 @@ public:
   QMenu *
   createSceneMenu(QPointF const scenePos);
 
+  // for deleting any pointer allocated in createSceneMenu
+  virtual
+  void
+  cleanupSceneMenu(QMenu *menu);
+
 Q_SIGNALS:
 
   void

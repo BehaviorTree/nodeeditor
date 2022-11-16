@@ -202,6 +202,12 @@ createSceneMenu(QPointF const scenePos)
   return nullptr;
 }
 
+void
+BasicGraphicsScene::
+cleanupSceneMenu(QMenu* menu)
+{
+  Q_UNUSED(menu);
+}
 
 void
 BasicGraphicsScene::
