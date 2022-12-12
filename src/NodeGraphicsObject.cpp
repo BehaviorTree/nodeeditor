@@ -321,7 +321,11 @@ mousePressEvent(QGraphicsSceneMouseEvent* event)
     _nodeState.setResizing(hit);
   }
 
-  _nodeState.setPressedPos(event->scenePos());
+  auto otherButtons = event->buttons() ^ event->button();
+  if (otherButtons == Qt::NoButton)
+  {
+    _nodeState.setPressedPos(event->scenePos());
+  }
 
   QGraphicsObject::mousePressEvent(event);
 
@@ -406,6 +410,12 @@ mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
   if (!_nodeState.resizing() && _nodeState.pressedPos() != event->scenePos())
   {
     Q_EMIT nodeScene()->nodeMoved(_nodeId, scenePos());
+
+    auto otherButtons = event->buttons();
+    if (otherButtons == Qt::NoButton)
+    {
+      _nodeState.setPressedPos(event->scenePos());
+    }
   }
   _nodeState.setResizing(false);
 
