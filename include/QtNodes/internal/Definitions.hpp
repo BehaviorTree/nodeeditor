@@ -131,8 +131,16 @@ inline bool operator!=(ConnectionId const& a, ConnectionId const& b)
   return !(a == b);
 }
 
+inline bool operator<(ConnectionId const &a, ConnectionId const &b)
+{
+    if (a.outNodeId == b.outNodeId) {
+        return a.inNodeId < b.inNodeId;
+    } else {
+        return (a.outNodeId < b.outNodeId);
+    }
+}
 
-inline void invertConnection(ConnectionId& id)
+inline void invertConnection(ConnectionId &id)
 {
   std::swap(id.outNodeId, id.inNodeId);
   std::swap(id.outPortIndex, id.inPortIndex);
