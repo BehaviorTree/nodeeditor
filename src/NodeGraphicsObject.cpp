@@ -212,6 +212,11 @@ void NodeGraphicsObject::lock(bool locked)
 {
   _nodeState.setLocked(locked);
 
+  if (_nodeState.isRoot())
+  {
+    return;
+  }
+
   setFlag(QGraphicsItem::ItemIsFocusable, !locked);
   setFlag(QGraphicsItem::ItemIsMovable, !locked);
   setFlag(QGraphicsItem::ItemIsSelectable, !locked);
