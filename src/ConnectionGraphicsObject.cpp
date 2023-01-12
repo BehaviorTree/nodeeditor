@@ -244,15 +244,17 @@ ConnectionStyle ConnectionGraphicsObject::connectionStyle() const
 {
   auto style = StyleCollection::connectionStyle();
 
-  QJsonDocument json =
-    QJsonDocument::fromVariant(_graphModel.nodeData(_connectionId.inNodeId, NodeRole::Style));
+  auto inNodeStyle = _graphModel.nodeData(_connectionId.inNodeId, NodeRole::Style);
+  QJsonDocument json = QJsonDocument::fromVariant(inNodeStyle);
   NodeStyle nodeStyle(json.object());
 
-  auto jsonCon = style.toJson()["ConnectionStyle"].toObject();
-  jsonCon["NormalColor"] = nodeStyle.FilledConnectionPointColor.darker().name();
+  auto connectionJson = style.toJson();
 
-  jsonCon["ConnectionStyle"] = jsonCon;
-  style.loadJson(jsonCon);
+  auto connectionJsonObj = connectionJson["ConnectionStyle"].toObject();
+  connectionJsonObj["NormalColor"] = nodeStyle.FilledConnectionPointColor.darker().name();
+
+  connectionJson["ConnectionStyle"] = connectionJsonObj;
+  style.loadJson(connectionJson);
 
   return style;
 }

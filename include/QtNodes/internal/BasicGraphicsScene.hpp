@@ -84,6 +84,9 @@ public:
   void
   onPortLayoutUpdated(PortLayout layout);
 
+  void
+  onNodeColorUpdated(NodeId const nodeId);
+
 public:
 
   /// @returns NodeGraphicsObject associated with the given nodeId.
