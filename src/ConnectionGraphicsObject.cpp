@@ -240,6 +240,22 @@ connectionState()
   return _connectionState;
 }
 
+ConnectionStyle ConnectionGraphicsObject::connectionStyle() const
+{
+  auto style = StyleCollection::connectionStyle();
+
+  QJsonDocument json =
+    QJsonDocument::fromVariant(_graphModel.nodeData(_connectionId.inNodeId, NodeRole::Style));
+  NodeStyle nodeStyle(json.object());
+
+  auto jsonCon = style.toJson()["ConnectionStyle"].toObject();
+  jsonCon["NormalColor"] = nodeStyle.FilledConnectionPointColor.darker().name();
+
+  jsonCon["ConnectionStyle"] = jsonCon;
+  style.loadJson(jsonCon);
+
+  return style;
+}
 
 void
 ConnectionGraphicsObject::

@@ -5,6 +5,7 @@
 #include <QtCore/QUuid>
 #include <QtWidgets/QGraphicsObject>
 
+#include "ConnectionStyle.hpp"
 #include "Definitions.hpp"
 #include "ConnectionState.hpp"
 
@@ -75,6 +76,9 @@ public:
 
   ConnectionState &
   connectionState();
+
+  ConnectionStyle
+  connectionStyle() const;
 
 protected:
 

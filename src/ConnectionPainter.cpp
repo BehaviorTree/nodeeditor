@@ -162,8 +162,7 @@ drawNormalLine(QPainter * painter,
 
   // colors
 
-  auto const &connectionStyle =
-    QtNodes::StyleCollection::connectionStyle();
+  auto const& connectionStyle = cgo.connectionStyle();
 
   QColor normalColorOut = connectionStyle.normalColor();
   QColor normalColorIn  = connectionStyle.normalColor();

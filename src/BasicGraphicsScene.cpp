@@ -155,14 +155,27 @@ lockNode(const NodeId nodeId, bool locked)
         auto cgo = connectionGraphicsObject(cnId);
 
         if (cgo)
+        {
           cgo->lock(locked);
+          cgo->update();
+        }
       }
     }
 
     node->update();
   }
-}
 
+  // to update the inner connection when status is changed, maybe move to another function
+  auto const& connected = graphModel().connections(nodeId, PortType::In, 0);
+  for (auto& cnId : connected)
+  {
+    auto cgo = connectionGraphicsObject(cnId);
+    if (cgo)
+    {
+      cgo->update();
+    }
+  }
+}
 
 NodeGraphicsObject*
 BasicGraphicsScene::
