@@ -38,14 +38,14 @@ NodeGraphicsObject(BasicGraphicsScene& scene,
 
   setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 
-  QJsonObject nodeStyleJson =
-    _graphModel.nodeData(_nodeId, NodeRole::Style).toJsonObject();
+//  QJsonObject nodeStyleJson =
+//    _graphModel.nodeData(_nodeId, NodeRole::Style).toJsonObject();
 
-  NodeStyle nodeStyle(nodeStyleJson);
+//  NodeStyle nodeStyle(nodeStyleJson);
 
   // TODO: Take style from model.
-  //auto const& nodeStyle = StyleCollection::nodeStyle();
-
+  auto const& nodeStyle = StyleCollection::nodeStyle();
+  if(nodeStyle.ShadowColor != Qt::transparent)
   {
     auto effect = new QGraphicsDropShadowEffect;
     effect->setOffset(4, 4);
