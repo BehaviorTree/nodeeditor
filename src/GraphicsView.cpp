@@ -43,6 +43,9 @@ GraphicsView(QWidget *parent)
   setCacheMode(QGraphicsView::CacheBackground);
   setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
 
+  auto const &flowViewStyle = StyleCollection::flowViewStyle();
+  setBackgroundBrush(flowViewStyle.BackgroundColor);
+
   //setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
 }
 
@@ -283,6 +286,9 @@ void
 GraphicsView::
 drawBackground(QPainter* painter, const QRectF &r)
 {
+  auto const &flowViewStyle = StyleCollection::flowViewStyle();
+  setBackgroundBrush(flowViewStyle.BackgroundColor);
+
   QGraphicsView::drawBackground(painter, r);
 
   auto drawGrid =
@@ -314,10 +320,6 @@ drawBackground(QPainter* painter, const QRectF &r)
         painter->drawLine(line);
       }
     };
-
-  auto const &flowViewStyle = StyleCollection::flowViewStyle();
-
-  setBackgroundBrush(flowViewStyle.BackgroundColor);
 
   QPen pfine(flowViewStyle.FineGridColor, 1.0);
 
