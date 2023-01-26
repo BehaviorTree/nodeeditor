@@ -35,10 +35,6 @@ GraphicsView(QWidget *parent)
   setDragMode(QGraphicsView::ScrollHandDrag);
   setRenderHint(QPainter::Antialiasing);
 
-  auto const &flowViewStyle = StyleCollection::flowViewStyle();
-
-  setBackgroundBrush(flowViewStyle.BackgroundColor);
-
   setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -320,6 +316,8 @@ drawBackground(QPainter* painter, const QRectF &r)
     };
 
   auto const &flowViewStyle = StyleCollection::flowViewStyle();
+
+  setBackgroundBrush(flowViewStyle.BackgroundColor);
 
   QPen pfine(flowViewStyle.FineGridColor, 1.0);
 
