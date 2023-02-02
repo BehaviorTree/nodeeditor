@@ -287,7 +287,12 @@ GraphicsView::
 drawBackground(QPainter* painter, const QRectF &r)
 {
   auto const &flowViewStyle = StyleCollection::flowViewStyle();
-  setBackgroundBrush(flowViewStyle.BackgroundColor);
+
+  if(backgroundBrush().color() != flowViewStyle.BackgroundColor)
+  {
+    // might be needed if style changed at runtime
+    setBackgroundBrush(flowViewStyle.BackgroundColor);
+  }
 
   QGraphicsView::drawBackground(painter, r);
 
