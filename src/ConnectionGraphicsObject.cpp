@@ -251,7 +251,7 @@ ConnectionStyle ConnectionGraphicsObject::connectionStyle() const
   auto connectionJson = style.toJson();
 
   auto connectionJsonObj = connectionJson["ConnectionStyle"].toObject();
-  connectionJsonObj["NormalColor"] = nodeStyle.FilledConnectionPointColor.darker().name();
+  connectionJsonObj["NormalColor"] = nodeStyle.FilledConnectionPointColor.name();
 
   connectionJson["ConnectionStyle"] = connectionJsonObj;
   style.loadJson(connectionJson);
