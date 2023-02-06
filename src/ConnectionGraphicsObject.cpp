@@ -247,18 +247,20 @@ ConnectionStyle ConnectionGraphicsObject::connectionStyle() const
   //-------------------------------------------
   // This is a BehaviorTree specific code, not applicable to upstream
 
-  const auto& nodeStyle = StyleCollection::nodeStyle();
+  const auto& defaultStyle = StyleCollection::nodeStyle();
 
   auto inNodeStyle = _graphModel.nodeData(_connectionId.inNodeId, NodeRole::Style);
   QJsonDocument json = QJsonDocument::fromVariant(inNodeStyle);
-  NodeStyle currentStyle(json.object());
+  NodeStyle nodeStyle(json.object());
 
-  // if FilledConnectionPointColor was changed, use it as connection color
-  if(nodeStyle.FilledConnectionPointColor != currentStyle.FilledConnectionPointColor)
+  // In real-time monitoring mode, the color of the connection should be the same
+  // as the NormalBoundaryColor.
+  // We recognize this case by the fact that nodeStyle and defaultStyle are different
+  if(defaultStyle.NormalBoundaryColor != nodeStyle.NormalBoundaryColor)
   {
     auto connectionJson = connectionStyle.toJson();
     auto connectionJsonObj = connectionJson["ConnectionStyle"].toObject();
-    connectionJsonObj["NormalColor"] = nodeStyle.FilledConnectionPointColor.name();
+    connectionJsonObj["NormalColor"] = nodeStyle.NormalBoundaryColor.name();
     connectionJson["ConnectionStyle"] = connectionJsonObj;
     connectionStyle.loadJson(connectionJson);
   }
