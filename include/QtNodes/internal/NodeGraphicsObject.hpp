@@ -47,8 +47,12 @@ public:
     /// their corresponding end points.
     void moveConnections() const;
 
+    void onNodeResized();
+
     /// Repaints the node once with reacting ports.
     void reactToConnection(ConnectionGraphicsObject const *cgo);
+
+    void lock(bool locked);
 
 protected:
     void paint(QPainter *painter,
@@ -78,7 +82,7 @@ private:
 
     void setLockedState();
 
-private:
+protected:
     NodeId _nodeId;
 
     AbstractGraphModel &_graphModel;
@@ -87,5 +91,21 @@ private:
 
     // either nullptr or owned by parent QGraphicsItem
     QGraphicsProxyWidget *_proxyWidget;
+};
+
+class RootNodeObject : public NodeGraphicsObject
+{
+public:
+    RootNodeObject(BasicGraphicsScene &scene, NodeId node)
+        : NodeGraphicsObject(scene, node)
+    {
+        setFlag(QGraphicsItem::ItemIsFocusable, true);
+        setFlag(QGraphicsItem::ItemIsMovable, false);
+        setFlag(QGraphicsItem::ItemIsSelectable, false);
+
+        _nodeState.setRoot();
+    }
+
+    ~RootNodeObject() override = default;
 };
 } // namespace QtNodes

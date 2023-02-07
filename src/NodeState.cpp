@@ -8,6 +8,8 @@ namespace QtNodes {
 NodeState::NodeState(NodeGraphicsObject &ngo)
     : _ngo(ngo)
     , _hovered(false)
+    , _locked(false)
+    , _root(false)
     , _resizing(false)
     , _connectionForReaction{nullptr}
 {
@@ -37,6 +39,16 @@ void NodeState::storeConnectionForReaction(ConnectionGraphicsObject const *cgo)
 void NodeState::resetConnectionForReaction()
 {
     _connectionForReaction.clear();
+}
+
+QPointF NodeState::pressedPos() const
+{
+    return _pressedPos;
+}
+
+void NodeState::setPressedPos(QPointF newPressedPos)
+{
+    _pressedPos = newPressedPos;
 }
 
 } // namespace QtNodes

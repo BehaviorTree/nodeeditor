@@ -33,11 +33,12 @@ NodeGraphicsObject::NodeGraphicsObject(BasicGraphicsScene &scene, NodeId nodeId)
 
     setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 
-    QJsonObject nodeStyleJson = _graphModel.nodeData(_nodeId, NodeRole::Style).toJsonObject();
+    //    QJsonObject nodeStyleJson = _graphModel.nodeData(_nodeId, NodeRole::Style).toJsonObject();
 
-    NodeStyle nodeStyle(nodeStyleJson);
+    //    NodeStyle nodeStyle(nodeStyleJson);
+    auto const &nodeStyle = StyleCollection::nodeStyle();
 
-    {
+    if (nodeStyle.ShadowColor != Qt::transparent) {
         auto effect = new QGraphicsDropShadowEffect;
         effect->setOffset(4, 4);
         effect->setBlurRadius(20);
@@ -143,11 +144,40 @@ void NodeGraphicsObject::moveConnections() const
     }
 }
 
+void NodeGraphicsObject::onNodeResized()
+{
+    if (auto w = _graphModel.nodeData(_nodeId, NodeRole::Widget).value<QWidget *>()) {
+        w->adjustSize();
+
+        prepareGeometryChange();
+
+        AbstractNodeGeometry &geometry = nodeScene()->nodeGeometry();
+        geometry.recomputeSize(_nodeId);
+
+        update();
+
+        moveConnections();
+    }
+}
+
 void NodeGraphicsObject::reactToConnection(ConnectionGraphicsObject const *cgo)
 {
     _nodeState.storeConnectionForReaction(cgo);
 
     update();
+}
+
+void NodeGraphicsObject::lock(bool locked)
+{
+    _nodeState.setLocked(locked);
+
+    if (_nodeState.isRoot()) {
+        return;
+    }
+
+    setFlag(QGraphicsItem::ItemIsFocusable, !locked);
+    setFlag(QGraphicsItem::ItemIsMovable, !locked);
+    setFlag(QGraphicsItem::ItemIsSelectable, !locked);
 }
 
 void NodeGraphicsObject::paint(QPainter *painter, QStyleOptionGraphicsItem const *option, QWidget *)
@@ -168,8 +198,8 @@ QVariant NodeGraphicsObject::itemChange(GraphicsItemChange change, const QVarian
 
 void NodeGraphicsObject::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    //if (_nodeState.locked())
-    //return;
+    if (_nodeState.locked())
+        return;
 
     AbstractNodeGeometry &geometry = nodeScene()->nodeGeometry();
 
@@ -208,15 +238,19 @@ void NodeGraphicsObject::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 if (!connected.empty() && outPolicy == ConnectionPolicy::One) {
                     for (auto &cnId : connected) {
                         _graphModel.deleteConnection(cnId);
+                        Q_EMIT nodeScene()->connectionRemoved();
                     }
                 }
+
+                ConnectionId const incompleteConnectionId = makeIncompleteConnectionId(_nodeId,
+                                                                                       portToCheck,
+                                                                                       portIndex);
+
+                nodeScene()->makeDraftConnection(incompleteConnectionId);
+
+                if (_nodeState.isRoot()) // !flags().testFlag(ItemIsSelectable)
+                    return;
             } // if port == out
-
-            ConnectionId const incompleteConnectionId = makeIncompleteConnectionId(_nodeId,
-                                                                                   portToCheck,
-                                                                                   portIndex);
-
-            nodeScene()->makeDraftConnection(incompleteConnectionId);
         }
     }
 
@@ -224,6 +258,11 @@ void NodeGraphicsObject::mousePressEvent(QGraphicsSceneMouseEvent *event)
         auto pos = event->pos();
         bool const hit = geometry.resizeHandleRect(_nodeId).contains(QPoint(pos.x(), pos.y()));
         _nodeState.setResizing(hit);
+    }
+
+    auto otherButtons = event->buttons() ^ event->button();
+    if (otherButtons == Qt::NoButton) {
+        _nodeState.setPressedPos(event->scenePos());
     }
 
     QGraphicsObject::mousePressEvent(event);
@@ -235,6 +274,9 @@ void NodeGraphicsObject::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void NodeGraphicsObject::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
+    if (_nodeState.locked())
+        return;
+
     // Deselect all other items after this one is selected.
     // Unless we press a CTRL button to add the item to the selected group before
     // starting moving.
@@ -285,6 +327,18 @@ void NodeGraphicsObject::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void NodeGraphicsObject::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+    if (_nodeState.locked())
+        return;
+
+    if (!_nodeState.resizing() && _nodeState.pressedPos() != event->scenePos()) {
+        Q_EMIT nodeScene()->nodeMoved(_nodeId, scenePos());
+
+        auto otherButtons = event->buttons();
+        if (otherButtons == Qt::NoButton) {
+            _nodeState.setPressedPos(event->scenePos());
+        }
+    }
+
     _nodeState.setResizing(false);
 
     QGraphicsObject::mouseReleaseEvent(event);
@@ -357,6 +411,9 @@ void NodeGraphicsObject::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 
 void NodeGraphicsObject::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
+    if (_nodeState.locked() || _nodeState.isRoot())
+        return;
+
     Q_EMIT nodeScene()->nodeContextMenu(_nodeId, mapToScene(event->pos()));
 }
 

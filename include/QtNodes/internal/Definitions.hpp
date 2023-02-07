@@ -80,6 +80,9 @@ enum class PortType {
 };
 Q_ENUM_NS(PortType)
 
+enum class PortLayout { Horizontal = 0, Vertical = 1 };
+Q_ENUM_NS(PortLayout)
+
 using PortCount = unsigned int;
 
 /// ports are consecutively numbered starting from zero.
@@ -113,6 +116,15 @@ inline bool operator==(ConnectionId const &a, ConnectionId const &b)
 inline bool operator!=(ConnectionId const &a, ConnectionId const &b)
 {
     return !(a == b);
+}
+
+inline bool operator<(ConnectionId const &a, ConnectionId const &b)
+{
+    if (a.outNodeId == b.outNodeId) {
+        return a.inNodeId < b.inNodeId;
+    } else {
+        return (a.outNodeId < b.outNodeId);
+    }
 }
 
 inline void invertConnection(ConnectionId &id)

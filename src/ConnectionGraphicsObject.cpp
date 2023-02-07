@@ -179,6 +179,13 @@ void ConnectionGraphicsObject::move()
     update();
 }
 
+void ConnectionGraphicsObject::lock(bool locked)
+{
+    setFlag(QGraphicsItem::ItemIsMovable, !locked);
+    setFlag(QGraphicsItem::ItemIsFocusable, !locked);
+    setFlag(QGraphicsItem::ItemIsSelectable, !locked);
+}
+
 ConnectionState const &ConnectionGraphicsObject::connectionState() const
 {
     return _connectionState;
@@ -187,6 +194,34 @@ ConnectionState const &ConnectionGraphicsObject::connectionState() const
 ConnectionState &ConnectionGraphicsObject::connectionState()
 {
     return _connectionState;
+}
+
+ConnectionStyle ConnectionGraphicsObject::connectionStyle() const
+{
+    auto connectionStyle = StyleCollection::connectionStyle();
+
+    //-------------------------------------------
+    // This is a BehaviorTree specific code, not applicable to upstream
+
+    const auto &defaultStyle = StyleCollection::nodeStyle();
+
+    auto inNodeStyle = _graphModel.nodeData(_connectionId.inNodeId, NodeRole::Style);
+    QJsonDocument json = QJsonDocument::fromVariant(inNodeStyle);
+    NodeStyle nodeStyle(json.object());
+
+    // In real-time monitoring mode, the color of the connection should be the same
+    // as the NormalBoundaryColor.
+    // We recognize this case by the fact that nodeStyle and defaultStyle are different
+    if (defaultStyle.NormalBoundaryColor != nodeStyle.NormalBoundaryColor) {
+        auto connectionJson = connectionStyle.toJson();
+        auto connectionJsonObj = connectionJson["ConnectionStyle"].toObject();
+        connectionJsonObj["NormalColor"] = nodeStyle.NormalBoundaryColor.name();
+        connectionJson["ConnectionStyle"] = connectionJsonObj;
+        connectionStyle.loadJson(connectionJson);
+    }
+    //-------------------------------------------
+
+    return connectionStyle;
 }
 
 void ConnectionGraphicsObject::paint(QPainter *painter,
@@ -289,6 +324,27 @@ void ConnectionGraphicsObject::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 std::pair<QPointF, QPointF> ConnectionGraphicsObject::pointsC1C2() const
 {
+    auto const layout = graphModel().portLayout();
+    const double maxOffset = 200;
+    const double minOffset = 40;
+
+    double distance = (layout == PortLayout::Horizontal) ? (_in.x() - _out.x())
+                                                         : (_in.y() - _out.y());
+
+    double ratio = (distance <= 0) ? 1.0 : 0.4;
+    double offset = std::abs(distance) * ratio;
+    offset = std::clamp(offset, minOffset, maxOffset);
+
+    if (layout == PortLayout::Horizontal) {
+        QPointF c1(_out.x() + offset, _out.y());
+        QPointF c2(_in.x() - offset, _in.y());
+        return std::make_pair(c1, c2);
+    } else {
+        QPointF c1(_out.x(), _out.y() + offset);
+        QPointF c2(_in.x(), _in.y() - offset);
+        return std::make_pair(c1, c2);
+    }
+
     switch (nodeScene()->orientation()) {
     case Qt::Horizontal:
         return pointsC1C2Horizontal();
@@ -375,6 +431,15 @@ std::pair<QPointF, QPointF> ConnectionGraphicsObject::pointsC1C2Vertical() const
     QPointF c2(_in.x() - horizontalOffset, _in.y() - verticalOffset);
 
     return std::make_pair(c1, c2);
+}
+
+void ConnectionGraphicsObject::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    if (!flags().testFlag(QGraphicsItem::ItemIsSelectable)) {
+        return;
+    }
+
+    Q_EMIT nodeScene()->connectionContextMenu(_connectionId, mapToScene(event->pos()));
 }
 
 } // namespace QtNodes

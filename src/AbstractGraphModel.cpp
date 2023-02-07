@@ -4,6 +4,16 @@
 
 namespace QtNodes {
 
+void AbstractGraphModel::setPortLayout(PortLayout layout)
+{
+    _portLayout = layout;
+}
+
+PortLayout AbstractGraphModel::portLayout() const
+{
+    return _portLayout;
+}
+
 void AbstractGraphModel::portsAboutToBeDeleted(NodeId const nodeId,
                                                PortType const portType,
                                                PortIndex const first,

@@ -76,6 +76,12 @@ public:
     /// Deletes all the nodes. Connections are removed automatically.
     void clearScene();
 
+    void lockNode(NodeId const nodeId, bool locked);
+
+    void onPortLayoutUpdated(PortLayout layout);
+
+    void onNodeColorUpdated(NodeId const nodeId);
+
 public:
     /// @returns NodeGraphicsObject associated with the given nodeId.
     /**
@@ -100,6 +106,11 @@ public:
    */
     virtual QMenu *createSceneMenu(QPointF const scenePos);
 
+    // for deleting any pointer allocated in createSceneMenu
+    virtual void cleanupSceneMenu(QMenu *menu);
+
+    std::vector<NodeId> selectedNodes() const;
+
 Q_SIGNALS:
     void nodeMoved(NodeId const nodeId, QPointF const &newLocation);
 
@@ -119,6 +130,14 @@ Q_SIGNALS:
 
     /// Signal allows showing custom context menu upon clicking a node.
     void nodeContextMenu(NodeId const nodeId, QPointF const pos);
+
+    void connectionContextMenu(ConnectionId const connectionId, QPointF const pos);
+
+    void selectionRemoved();
+
+    void connectionRemoved();
+
+    void connectionAdded();
 
 private:
     /// @brief Creates Node and Connection graphics objects.
@@ -140,6 +159,8 @@ public Q_SLOTS:
     void onConnectionCreated(ConnectionId const connectionId);
 
     void onNodeDeleted(NodeId const nodeId);
+
+    void onNodeResized(NodeId const nodeId);
 
     void onNodeCreated(NodeId const nodeId);
 

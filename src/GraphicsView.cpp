@@ -37,10 +37,6 @@ GraphicsView::GraphicsView(QWidget *parent)
     setDragMode(QGraphicsView::ScrollHandDrag);
     setRenderHint(QPainter::Antialiasing);
 
-    auto const &flowViewStyle = StyleCollection::flowViewStyle();
-
-    setBackgroundBrush(flowViewStyle.BackgroundColor);
-
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -48,6 +44,9 @@ GraphicsView::GraphicsView(QWidget *parent)
 
     setCacheMode(QGraphicsView::CacheBackground);
     setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
+
+    auto const &flowViewStyle = StyleCollection::flowViewStyle();
+    setBackgroundBrush(flowViewStyle.BackgroundColor);
 
     setScaleRange(0.3, 2);
 
@@ -100,6 +99,9 @@ void GraphicsView::setScene(BasicGraphicsScene *scene)
 
         addAction(_deleteSelectionAction);
     }
+
+    // as we handle manually
+    return;
 
     {
         delete _duplicateSelectionAction;
@@ -175,6 +177,8 @@ void GraphicsView::contextMenuEvent(QContextMenuEvent *event)
     if (menu) {
         menu->exec(event->globalPos());
     }
+
+    nodeScene()->cleanupSceneMenu(menu);
 }
 
 void GraphicsView::wheelEvent(QWheelEvent *event)
@@ -342,6 +346,13 @@ void GraphicsView::mouseMoveEvent(QMouseEvent *event)
 
 void GraphicsView::drawBackground(QPainter *painter, const QRectF &r)
 {
+    auto const &flowViewStyle = StyleCollection::flowViewStyle();
+
+    if (backgroundBrush().color() != flowViewStyle.BackgroundColor) {
+        // might be needed if style changed at runtime
+        setBackgroundBrush(flowViewStyle.BackgroundColor);
+    }
+
     QGraphicsView::drawBackground(painter, r);
 
     auto drawGrid = [&](double gridStep) {
@@ -367,8 +378,6 @@ void GraphicsView::drawBackground(QPainter *painter, const QRectF &r)
             painter->drawLine(line);
         }
     };
-
-    auto const &flowViewStyle = StyleCollection::flowViewStyle();
 
     QPen pfine(flowViewStyle.FineGridColor, 1.0);
 

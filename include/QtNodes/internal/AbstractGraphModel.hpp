@@ -225,6 +225,10 @@ public:
    */
     void portsInserted();
 
+    void setPortLayout(PortLayout layout);
+
+    PortLayout portLayout() const;
+
 Q_SIGNALS:
     void connectionCreated(ConnectionId const connectionId);
 
@@ -238,12 +242,16 @@ Q_SIGNALS:
 
     void nodeFlagsUpdated(NodeId const nodeId);
 
+    void nodeResized(NodeId const nodeId);
+
     void nodePositionUpdated(NodeId const nodeId);
 
     void modelReset();
 
 private:
     std::vector<ConnectionId> _shiftedByDynamicPortsConnections;
+
+    PortLayout _portLayout = PortLayout::Horizontal;
 };
 
 } // namespace QtNodes

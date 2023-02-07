@@ -6,6 +6,7 @@
 #include <QtWidgets/QGraphicsObject>
 
 #include "ConnectionState.hpp"
+#include "ConnectionStyle.hpp"
 #include "Definitions.hpp"
 
 class QGraphicsSceneMouseEvent;
@@ -54,9 +55,13 @@ public:
     /// Updates the position of both ends
     void move();
 
+    void lock(bool locked);
+
     ConnectionState const &connectionState() const;
 
     ConnectionState &connectionState();
+
+    ConnectionStyle connectionStyle() const;
 
 protected:
     void paint(QPainter *painter,
@@ -72,6 +77,8 @@ protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
 
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
+
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
 private:
     void initializePosition();

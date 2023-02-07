@@ -63,6 +63,11 @@ BasicGraphicsScene::BasicGraphicsScene(AbstractGraphModel &graphModel, QObject *
             &BasicGraphicsScene::onNodeDeleted);
 
     connect(&_graphModel,
+            &AbstractGraphModel::nodeResized,
+            this,
+            &BasicGraphicsScene::onNodeResized);
+
+    connect(&_graphModel,
             &AbstractGraphModel::nodePositionUpdated,
             this,
             &BasicGraphicsScene::onNodePositionUpdated);
@@ -135,6 +140,30 @@ void BasicGraphicsScene::clearScene()
     }
 }
 
+void BasicGraphicsScene::lockNode(const NodeId nodeId, bool locked)
+{
+    auto node = nodeGraphicsObject(nodeId);
+    if (node) {
+        node->lock(locked);
+
+        size_t const n = _graphModel.nodeData(nodeId, NodeRole::OutPortCount).toUInt();
+        for (PortIndex portIndex = 0; portIndex < n; ++portIndex) {
+            auto const &connected = _graphModel.connections(nodeId, PortType::Out, portIndex);
+
+            for (auto &cnId : connected) {
+                auto cgo = connectionGraphicsObject(cnId);
+
+                if (cgo) {
+                    cgo->lock(locked);
+                    cgo->update();
+                }
+            }
+        }
+
+        node->update();
+    }
+}
+
 NodeGraphicsObject *BasicGraphicsScene::nodeGraphicsObject(NodeId nodeId)
 {
     NodeGraphicsObject *ngo = nullptr;
@@ -182,13 +211,37 @@ QMenu *BasicGraphicsScene::createSceneMenu(QPointF const scenePos)
     return nullptr;
 }
 
+std::vector<NodeId> BasicGraphicsScene::selectedNodes() const
+{
+    QList<QGraphicsItem *> graphicsItems = selectedItems();
+
+    std::vector<NodeId> result;
+    result.reserve(graphicsItems.size());
+
+    for (QGraphicsItem *item : graphicsItems) {
+        if (auto ngo = qgraphicsitem_cast<NodeGraphicsObject *>(item)) {
+            result.push_back(ngo->nodeId());
+        }
+    }
+    return result;
+}
+
+void BasicGraphicsScene::cleanupSceneMenu(QMenu *menu)
+{
+    Q_UNUSED(menu);
+}
+
 void BasicGraphicsScene::traverseGraphAndPopulateGraphicsObjects()
 {
     auto allNodeIds = _graphModel.allNodeIds();
 
     // First create all the nodes.
     for (NodeId const nodeId : allNodeIds) {
-        _nodeGraphicsObjects[nodeId] = std::make_unique<NodeGraphicsObject>(*this, nodeId);
+        auto caption = _graphModel.nodeData(nodeId, NodeRole::Caption).toString();
+        if (caption != "Root")
+            _nodeGraphicsObjects[nodeId] = std::make_unique<NodeGraphicsObject>(*this, nodeId);
+        else
+            _nodeGraphicsObjects[nodeId] = std::make_unique<RootNodeObject>(*this, nodeId);
     }
 
     // Then for each node check output connections and insert them.
@@ -249,9 +302,21 @@ void BasicGraphicsScene::onNodeDeleted(NodeId const nodeId)
     }
 }
 
+void BasicGraphicsScene::onNodeResized(const NodeId nodeId)
+{
+    auto it = _nodeGraphicsObjects.find(nodeId);
+    if (it != _nodeGraphicsObjects.end()) {
+        it->second->onNodeResized();
+    }
+}
+
 void BasicGraphicsScene::onNodeCreated(NodeId const nodeId)
 {
-    _nodeGraphicsObjects[nodeId] = std::make_unique<NodeGraphicsObject>(*this, nodeId);
+    auto caption = _graphModel.nodeData(nodeId, NodeRole::Caption).toString();
+    if (caption != "Root")
+        _nodeGraphicsObjects[nodeId] = std::make_unique<NodeGraphicsObject>(*this, nodeId);
+    else
+        _nodeGraphicsObjects[nodeId] = std::make_unique<RootNodeObject>(*this, nodeId);
 }
 
 void BasicGraphicsScene::onNodePositionUpdated(NodeId const nodeId)
@@ -293,6 +358,26 @@ void BasicGraphicsScene::onModelReset()
     clear();
 
     traverseGraphAndPopulateGraphicsObjects();
+}
+
+void BasicGraphicsScene::onPortLayoutUpdated(PortLayout)
+{
+    for (auto &[nodeId, nodes] : _nodeGraphicsObjects) {
+        nodes->moveConnections();
+        nodes->update();
+    }
+}
+
+void BasicGraphicsScene::onNodeColorUpdated(const NodeId nodeId)
+{
+    // to update the inner connection when status is changed
+    auto const &connected = graphModel().connections(nodeId, PortType::In, 0);
+    for (auto &cnId : connected) {
+        auto cgo = connectionGraphicsObject(cnId);
+        if (cgo) {
+            cgo->update();
+        }
+    }
 }
 
 } // namespace QtNodes
