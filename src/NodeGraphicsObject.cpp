@@ -27,7 +27,7 @@ NodeGraphicsObject::NodeGraphicsObject(BasicGraphicsScene &scene, NodeId nodeId)
     scene.addItem(this);
 
     setFlag(QGraphicsItem::ItemDoesntPropagateOpacityToChildren, true);
-    setFlag(QGraphicsItem::ItemIsFocusable, true);
+    setFlag(QGraphicsItem::ItemSendsScenePositionChanges, true);
 
     setLockedState();
 
@@ -61,7 +61,7 @@ NodeGraphicsObject::NodeGraphicsObject(BasicGraphicsScene &scene, NodeId nodeId)
 
     setPos(pos);
 
-    connect(&_graphModel, &AbstractGraphModel::nodeFlagsUpdated, [this](NodeId const nodeId) {
+    connect(&_graphModel, &AbstractGraphModel::nodeFlagsUpdated, this, [this](NodeId const nodeId) {
         if (_nodeId == nodeId)
             setLockedState();
     });
@@ -112,12 +112,17 @@ void NodeGraphicsObject::embedQWidget()
 void NodeGraphicsObject::setLockedState()
 {
     NodeFlags flags = _graphModel.nodeFlags(_nodeId);
-
     bool const locked = flags.testFlag(NodeFlag::Locked);
+    // should we check if realy changed!
+    _nodeState.setLocked(locked);
 
-    setFlag(QGraphicsItem::ItemIsMovable, !locked);
-    setFlag(QGraphicsItem::ItemIsSelectable, !locked);
-    setFlag(QGraphicsItem::ItemSendsScenePositionChanges, !locked);
+    if (!_nodeState.isRoot()) {
+        setFlag(QGraphicsItem::ItemIsMovable, !locked);
+        setFlag(QGraphicsItem::ItemIsSelectable, !locked);
+        setFlag(QGraphicsItem::ItemIsFocusable, !locked);
+    }
+
+    update();
 }
 
 QRectF NodeGraphicsObject::boundingRect() const
@@ -144,40 +149,11 @@ void NodeGraphicsObject::moveConnections() const
     }
 }
 
-void NodeGraphicsObject::onNodeResized()
-{
-    if (auto w = _graphModel.nodeData(_nodeId, NodeRole::Widget).value<QWidget *>()) {
-        w->adjustSize();
-
-        prepareGeometryChange();
-
-        AbstractNodeGeometry &geometry = nodeScene()->nodeGeometry();
-        geometry.recomputeSize(_nodeId);
-
-        update();
-
-        moveConnections();
-    }
-}
-
 void NodeGraphicsObject::reactToConnection(ConnectionGraphicsObject const *cgo)
 {
     _nodeState.storeConnectionForReaction(cgo);
 
     update();
-}
-
-void NodeGraphicsObject::lock(bool locked)
-{
-    _nodeState.setLocked(locked);
-
-    if (_nodeState.isRoot()) {
-        return;
-    }
-
-    setFlag(QGraphicsItem::ItemIsFocusable, !locked);
-    setFlag(QGraphicsItem::ItemIsMovable, !locked);
-    setFlag(QGraphicsItem::ItemIsSelectable, !locked);
 }
 
 void NodeGraphicsObject::paint(QPainter *painter, QStyleOptionGraphicsItem const *option, QWidget *)

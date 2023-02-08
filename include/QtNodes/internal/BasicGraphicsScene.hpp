@@ -76,11 +76,11 @@ public:
     /// Deletes all the nodes. Connections are removed automatically.
     void clearScene();
 
-    void lockNode(NodeId const nodeId, bool locked);
-
     void onPortLayoutUpdated(PortLayout layout);
 
-    void onNodeColorUpdated(NodeId const nodeId);
+    void onStyleUpdated();
+
+    void onFlagsUpdated(NodeId const nodeId);
 
 public:
     /// @returns NodeGraphicsObject associated with the given nodeId.
@@ -159,8 +159,6 @@ public Q_SLOTS:
     void onConnectionCreated(ConnectionId const connectionId);
 
     void onNodeDeleted(NodeId const nodeId);
-
-    void onNodeResized(NodeId const nodeId);
 
     void onNodeCreated(NodeId const nodeId);
 

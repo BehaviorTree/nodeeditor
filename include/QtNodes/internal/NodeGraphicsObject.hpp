@@ -47,12 +47,8 @@ public:
     /// their corresponding end points.
     void moveConnections() const;
 
-    void onNodeResized();
-
     /// Repaints the node once with reacting ports.
     void reactToConnection(ConnectionGraphicsObject const *cgo);
-
-    void lock(bool locked);
 
 protected:
     void paint(QPainter *painter,

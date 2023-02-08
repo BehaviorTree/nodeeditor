@@ -63,11 +63,6 @@ BasicGraphicsScene::BasicGraphicsScene(AbstractGraphModel &graphModel, QObject *
             &BasicGraphicsScene::onNodeDeleted);
 
     connect(&_graphModel,
-            &AbstractGraphModel::nodeResized,
-            this,
-            &BasicGraphicsScene::onNodeResized);
-
-    connect(&_graphModel,
             &AbstractGraphModel::nodePositionUpdated,
             this,
             &BasicGraphicsScene::onNodePositionUpdated);
@@ -76,6 +71,16 @@ BasicGraphicsScene::BasicGraphicsScene(AbstractGraphModel &graphModel, QObject *
             &AbstractGraphModel::nodeUpdated,
             this,
             &BasicGraphicsScene::onNodeUpdated);
+
+    connect(&_graphModel,
+            &AbstractGraphModel::styleUpdated,
+            this,
+            &BasicGraphicsScene::onStyleUpdated);
+
+    connect(&_graphModel,
+            &AbstractGraphModel::nodeFlagsUpdated,
+            this,
+            &BasicGraphicsScene::onFlagsUpdated);
 
     connect(this, &BasicGraphicsScene::nodeClicked, this, &BasicGraphicsScene::onNodeClicked);
 
@@ -137,30 +142,6 @@ void BasicGraphicsScene::clearScene()
 
     for (auto nodeId : allNodeIds) {
         graphModel().deleteNode(nodeId);
-    }
-}
-
-void BasicGraphicsScene::lockNode(const NodeId nodeId, bool locked)
-{
-    auto node = nodeGraphicsObject(nodeId);
-    if (node) {
-        node->lock(locked);
-
-        size_t const n = _graphModel.nodeData(nodeId, NodeRole::OutPortCount).toUInt();
-        for (PortIndex portIndex = 0; portIndex < n; ++portIndex) {
-            auto const &connected = _graphModel.connections(nodeId, PortType::Out, portIndex);
-
-            for (auto &cnId : connected) {
-                auto cgo = connectionGraphicsObject(cnId);
-
-                if (cgo) {
-                    cgo->lock(locked);
-                    cgo->update();
-                }
-            }
-        }
-
-        node->update();
     }
 }
 
@@ -302,14 +283,6 @@ void BasicGraphicsScene::onNodeDeleted(NodeId const nodeId)
     }
 }
 
-void BasicGraphicsScene::onNodeResized(const NodeId nodeId)
-{
-    auto it = _nodeGraphicsObjects.find(nodeId);
-    if (it != _nodeGraphicsObjects.end()) {
-        it->second->onNodeResized();
-    }
-}
-
 void BasicGraphicsScene::onNodeCreated(NodeId const nodeId)
 {
     auto caption = _graphModel.nodeData(nodeId, NodeRole::Caption).toString();
@@ -368,14 +341,29 @@ void BasicGraphicsScene::onPortLayoutUpdated(PortLayout)
     }
 }
 
-void BasicGraphicsScene::onNodeColorUpdated(const NodeId nodeId)
+void BasicGraphicsScene::onStyleUpdated()
 {
-    // to update the inner connection when status is changed
-    auto const &connected = graphModel().connections(nodeId, PortType::In, 0);
-    for (auto &cnId : connected) {
-        auto cgo = connectionGraphicsObject(cnId);
-        if (cgo) {
-            cgo->update();
+    for (auto &[nodeId, nodes] : _nodeGraphicsObjects) {
+        onNodeUpdated(nodeId);
+    }
+}
+
+void BasicGraphicsScene::onFlagsUpdated(const NodeId nodeId)
+{
+    NodeFlags flags = _graphModel.nodeFlags(nodeId);
+    bool const locked = flags.testFlag(NodeFlag::Locked);
+
+    size_t const n = _graphModel.nodeData(nodeId, NodeRole::OutPortCount).toUInt();
+    for (PortIndex portIndex = 0; portIndex < n; ++portIndex) {
+        auto const &connected = _graphModel.connections(nodeId, PortType::Out, portIndex);
+
+        for (auto &cnId : connected) {
+            auto cgo = connectionGraphicsObject(cnId);
+
+            if (cgo) {
+                cgo->lock(locked);
+                cgo->update();
+            }
         }
     }
 }

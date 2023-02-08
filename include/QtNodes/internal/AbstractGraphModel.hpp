@@ -242,9 +242,9 @@ Q_SIGNALS:
 
     void nodeFlagsUpdated(NodeId const nodeId);
 
-    void nodeResized(NodeId const nodeId);
-
     void nodePositionUpdated(NodeId const nodeId);
+
+    void styleUpdated();
 
     void modelReset();
 
