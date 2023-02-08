@@ -133,6 +133,7 @@ Q_SIGNALS:
 
     void connectionContextMenu(ConnectionId const connectionId, QPointF const pos);
 
+    // to handle in our undo events
     void selectionRemoved();
 
     void connectionRemoved();

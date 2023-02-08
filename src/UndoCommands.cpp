@@ -387,7 +387,7 @@ void DisconnectCommand::undo()
 void DisconnectCommand::redo()
 {
     _scene->graphModel().deleteConnection(_connId);
-    Q_EMIT _scene->selectionRemoved();
+    Q_EMIT _scene->connectionRemoved();
 }
 
 //------

@@ -214,6 +214,7 @@ void NodeGraphicsObject::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 if (!connected.empty() && outPolicy == ConnectionPolicy::One) {
                     for (auto &cnId : connected) {
                         _graphModel.deleteConnection(cnId);
+                        // not handled in nodeeditor undo events
                         Q_EMIT nodeScene()->connectionRemoved();
                     }
                 }
@@ -224,7 +225,8 @@ void NodeGraphicsObject::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
                 nodeScene()->makeDraftConnection(incompleteConnectionId);
 
-                if (_nodeState.isRoot()) // !flags().testFlag(ItemIsSelectable)
+                // otherwise we will have a error connecting the root!
+                if (_nodeState.isRoot())
                     return;
             } // if port == out
         }

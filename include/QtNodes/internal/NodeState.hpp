@@ -30,10 +30,12 @@ public:
 
     void setResizing(bool resizing);
 
+    // can be removed and replaced by _graphModel.nodeFlags
     bool locked() const { return _locked; }
 
     void setLocked(bool locked = true) { _locked = locked; }
 
+    // can be kept or moved to _graphModel.nodeFlags
     bool isRoot() const { return _root; }
 
     void setRoot(bool root = true) { _root = root; }
@@ -46,6 +48,7 @@ public:
 
     void resetConnectionForReaction();
 
+    // used for detecting nodeMove, instead of _nodeDrag of scene
     QPointF pressedPos() const;
     void setPressedPos(QPointF newPressedPos);
 
