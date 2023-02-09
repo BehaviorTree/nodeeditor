@@ -27,6 +27,7 @@ QRectF AbstractNodeGeometry::boundingRect(NodeId const nodeId) const
     auto const &nodeStyle = StyleCollection::nodeStyle();
     int addon = 4 * nodeStyle.ConnectionPointDiameter;
 
+    // should we use this according to geometry?
     widthMargin = std::max(addon, widthMargin);
     heightMargin = std::max(addon, heightMargin);
 
