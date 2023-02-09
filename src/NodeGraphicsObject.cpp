@@ -135,10 +135,13 @@ QRectF NodeGraphicsObject::boundingRect() const
 
 void NodeGraphicsObject::setGeometryChanged()
 {
+    prepareGeometryChange();
+}
+
+void NodeGraphicsObject::updateWidgetPosition()
+{
     AbstractNodeGeometry &geometry = nodeScene()->nodeGeometry();
     _proxyWidget->setPos(geometry.widgetPosition(_nodeId));
-
-    prepareGeometryChange();
 }
 
 void NodeGraphicsObject::moveConnections() const

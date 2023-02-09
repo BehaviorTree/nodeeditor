@@ -323,7 +323,7 @@ void BasicGraphicsScene::onNodeUpdated(NodeId const nodeId)
         node->setGeometryChanged();
 
         _nodeGeometry->recomputeSize(nodeId);
-
+        node->updateWidgetPosition();
         node->update();
         node->moveConnections();
     }

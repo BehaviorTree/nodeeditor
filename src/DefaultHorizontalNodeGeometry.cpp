@@ -169,6 +169,7 @@ QPointF DefaultHorizontalNodeGeometry::widgetPosition(NodeId const nodeId) const
             return QPointF(2.0 * _portSpasing + maxPortsTextAdvance(nodeId, PortType::In),
                            captionHeight);
         } else {
+            // size should have more height than w unless there will be an unexpected behaviour
             return QPointF(2.0 * _portSpasing + maxPortsTextAdvance(nodeId, PortType::In),
                            (captionHeight + size.height() - w->height()) / 2.0);
         }
