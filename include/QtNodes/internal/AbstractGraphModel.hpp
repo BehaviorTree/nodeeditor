@@ -248,6 +248,8 @@ Q_SIGNALS:
 
     void modelReset();
 
+    void portLayoutUpdated(PortLayout);
+
 private:
     std::vector<ConnectionId> _shiftedByDynamicPortsConnections;
 

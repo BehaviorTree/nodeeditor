@@ -324,27 +324,6 @@ void ConnectionGraphicsObject::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 std::pair<QPointF, QPointF> ConnectionGraphicsObject::pointsC1C2() const
 {
-    auto const layout = graphModel().portLayout();
-    const double maxOffset = 200;
-    const double minOffset = 40;
-
-    double distance = (layout == PortLayout::Horizontal) ? (_in.x() - _out.x())
-                                                         : (_in.y() - _out.y());
-
-    double ratio = (distance <= 0) ? 1.0 : 0.4;
-    double offset = std::abs(distance) * ratio;
-    offset = std::clamp(offset, minOffset, maxOffset);
-
-    if (layout == PortLayout::Horizontal) {
-        QPointF c1(_out.x() + offset, _out.y());
-        QPointF c2(_in.x() - offset, _in.y());
-        return std::make_pair(c1, c2);
-    } else {
-        QPointF c1(_out.x(), _out.y() + offset);
-        QPointF c2(_in.x(), _in.y() - offset);
-        return std::make_pair(c1, c2);
-    }
-
     switch (nodeScene()->orientation()) {
     case Qt::Horizontal:
         return pointsC1C2Horizontal();
@@ -395,8 +374,15 @@ std::pair<QPointF, QPointF> ConnectionGraphicsObject::pointsC1C2Horizontal() con
 
     horizontalOffset *= ratioX;
 
-    QPointF c1(_out.x() + horizontalOffset, _out.y() + verticalOffset);
+    // overrides the default one by groot!
+    const double minOffset = 40;
+    double ratio = (xDistance <= 0) ? 1.0 : 0.4;
+    double offset = std::abs(xDistance) * ratio;
+    offset = std::clamp(offset, minOffset, defaultOffset);
+    horizontalOffset = offset;
+    verticalOffset = 0;
 
+    QPointF c1(_out.x() + horizontalOffset, _out.y() + verticalOffset);
     QPointF c2(_in.x() - horizontalOffset, _in.y() - verticalOffset);
 
     return std::make_pair(c1, c2);
@@ -426,8 +412,15 @@ std::pair<QPointF, QPointF> ConnectionGraphicsObject::pointsC1C2Vertical() const
 
     verticalOffset *= ratioY;
 
-    QPointF c1(_out.x() + horizontalOffset, _out.y() + verticalOffset);
+    // overrides the default one by groot!
+    const double minOffset = 40;
+    double ratio = (yDistance <= 0) ? 1.0 : 0.4;
+    double offset = std::abs(yDistance) * ratio;
+    offset = std::clamp(offset, minOffset, defaultOffset);
+    horizontalOffset = 0;
+    verticalOffset = offset;
 
+    QPointF c1(_out.x() + horizontalOffset, _out.y() + verticalOffset);
     QPointF c2(_in.x() - horizontalOffset, _in.y() - verticalOffset);
 
     return std::make_pair(c1, c2);

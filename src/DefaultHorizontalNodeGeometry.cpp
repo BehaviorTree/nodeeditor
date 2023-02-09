@@ -63,61 +63,49 @@ QPointF DefaultHorizontalNodeGeometry::portPosition(NodeId const nodeId,
                                                     PortType const portType,
                                                     PortIndex const portIndex) const
 {
+    unsigned int const step = _portSize + _portSpasing;
+
     QPointF result;
 
-    PortLayout layout = _graphModel.portLayout();
+    double totalHeight = 0.0;
+
+    totalHeight += captionRect(nodeId).height();
+    totalHeight += _portSpasing;
+
+    totalHeight += step * portIndex;
+    totalHeight += step / 2.0;
+
     QSize size = _graphModel.nodeData<QSize>(nodeId, NodeRole::Size);
 
-    if (layout == PortLayout::Horizontal) {
-        switch (portType) {
-        case PortType::In: {
-            PortCount nInPorts = _graphModel.nodeData<PortCount>(nodeId, NodeRole::InPortCount);
-            int step = size.height() / (1 + nInPorts);
-            double posY = (1 + portIndex) * step;
-            double x = 0.0;
+    switch (portType) {
+    case PortType::In: {
+        double x = 0.0;
 
-            result = QPointF(x, posY);
-            break;
-        }
+        // overrides the default one by groot!
+        PortCount nInPorts = _graphModel.nodeData<PortCount>(nodeId, NodeRole::InPortCount);
+        int step = size.height() / (1 + nInPorts);
+        double posY = (1 + portIndex) * step;
+        totalHeight = posY;
 
-        case PortType::Out: {
-            PortCount nOutPorts = _graphModel.nodeData<PortCount>(nodeId, NodeRole::OutPortCount);
-            int step = size.height() / (1 + nOutPorts);
-            double posY = (1 + portIndex) * step;
-            double x = size.width();
+        result = QPointF(x, totalHeight);
+        break;
+    }
 
-            result = QPointF(x, posY);
-            break;
-        }
+    case PortType::Out: {
+        double x = size.width();
 
-        default:
-            break;
-        }
-    } else {
-        switch (portType) {
-        case PortType::In: {
-            PortCount nInPorts = _graphModel.nodeData<PortCount>(nodeId, NodeRole::InPortCount);
-            int step = size.width() / (1 + nInPorts);
-            double posX = (1 + portIndex) * step;
-            double y = 0.0;
+        // overrides the default one by groot!
+        PortCount nOutPorts = _graphModel.nodeData<PortCount>(nodeId, NodeRole::OutPortCount);
+        int step = size.height() / (1 + nOutPorts);
+        double posY = (1 + portIndex) * step;
+        totalHeight = posY;
 
-            result = QPointF(posX, y);
-            break;
-        }
+        result = QPointF(x, totalHeight);
+        break;
+    }
 
-        case PortType::Out: {
-            PortCount nOutPorts = _graphModel.nodeData<PortCount>(nodeId, NodeRole::OutPortCount);
-            int step = size.width() / (1 + nOutPorts);
-            double posX = (1 + portIndex) * step;
-            double y = size.height();
-
-            result = QPointF(posX, y);
-            break;
-        }
-
-        default:
-            break;
-        }
+    default:
+        break;
     }
 
     return result;

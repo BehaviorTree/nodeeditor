@@ -6,7 +6,10 @@ namespace QtNodes {
 
 void AbstractGraphModel::setPortLayout(PortLayout layout)
 {
-    _portLayout = layout;
+    if (_portLayout != layout) {
+        _portLayout = layout;
+        portLayoutUpdated(layout);
+    }
 }
 
 PortLayout AbstractGraphModel::portLayout() const

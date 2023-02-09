@@ -73,6 +73,11 @@ BasicGraphicsScene::BasicGraphicsScene(AbstractGraphModel &graphModel, QObject *
             &BasicGraphicsScene::onNodeUpdated);
 
     connect(&_graphModel,
+            &AbstractGraphModel::portLayoutUpdated,
+            this,
+            &BasicGraphicsScene::onPortLayoutUpdated);
+
+    connect(&_graphModel,
             &AbstractGraphModel::styleUpdated,
             this,
             &BasicGraphicsScene::onStyleUpdated);
@@ -182,7 +187,8 @@ void BasicGraphicsScene::setOrientation(Qt::Orientation const orientation)
             break;
         }
 
-        onModelReset();
+        // having some trouble with reset! we just update! after calling this
+        //        onModelReset();
     }
 }
 
@@ -333,8 +339,10 @@ void BasicGraphicsScene::onModelReset()
     traverseGraphAndPopulateGraphicsObjects();
 }
 
-void BasicGraphicsScene::onPortLayoutUpdated(PortLayout)
+void BasicGraphicsScene::onPortLayoutUpdated(PortLayout layout)
 {
+    setOrientation(layout == QtNodes::PortLayout::Horizontal ? Qt::Horizontal : Qt::Vertical);
+
     for (auto &[nodeId, nodes] : _nodeGraphicsObjects) {
         nodes->moveConnections();
         nodes->update();

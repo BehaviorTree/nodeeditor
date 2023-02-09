@@ -96,6 +96,11 @@ QPointF DefaultVerticalNodeGeometry::portPosition(NodeId const nodeId,
 
         double y = 0.0;
 
+        // overrides the default one by groot! does not differ too much
+        int step = size.width() / (1 + nInPorts);
+        double posX = (1 + portIndex) * step;
+        x = posX;
+
         result = QPointF(x, y);
 
         break;
@@ -108,6 +113,11 @@ QPointF DefaultVerticalNodeGeometry::portPosition(NodeId const nodeId,
         double x = (size.width() - (nOutPorts - 1) * outPortWidth) / 2.0 + portIndex * outPortWidth;
 
         double y = size.height();
+
+        // overrides the default one by groot! does not differ too much
+        int step = size.width() / (1 + nOutPorts);
+        double posX = (1 + portIndex) * step;
+        x = posX;
 
         result = QPointF(x, y);
 
