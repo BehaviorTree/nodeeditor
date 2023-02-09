@@ -8,7 +8,7 @@ void AbstractGraphModel::setPortLayout(PortLayout layout)
 {
     if (_portLayout != layout) {
         _portLayout = layout;
-        portLayoutUpdated(layout);
+        Q_EMIT portLayoutUpdated(layout);
     }
 }
 

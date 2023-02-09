@@ -36,6 +36,7 @@ NodeGraphicsObject::NodeGraphicsObject(BasicGraphicsScene &scene, NodeId nodeId)
     //    QJsonObject nodeStyleJson = _graphModel.nodeData(_nodeId, NodeRole::Style).toJsonObject();
 
     //    NodeStyle nodeStyle(nodeStyleJson);
+
     auto const &nodeStyle = StyleCollection::nodeStyle();
 
     if (nodeStyle.ShadowColor != Qt::transparent) {
@@ -134,6 +135,9 @@ QRectF NodeGraphicsObject::boundingRect() const
 
 void NodeGraphicsObject::setGeometryChanged()
 {
+    AbstractNodeGeometry &geometry = nodeScene()->nodeGeometry();
+    _proxyWidget->setPos(geometry.widgetPosition(_nodeId));
+
     prepareGeometryChange();
 }
 

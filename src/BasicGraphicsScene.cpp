@@ -246,6 +246,13 @@ void BasicGraphicsScene::traverseGraphAndPopulateGraphicsObjects()
     }
 }
 
+void BasicGraphicsScene::updateAllNodes()
+{
+    for (auto &[nodeId, nodes] : _nodeGraphicsObjects) {
+        onNodeUpdated(nodeId);
+    }
+}
+
 void BasicGraphicsScene::updateAttachedNodes(ConnectionId const connectionId,
                                              PortType const portType)
 {
@@ -342,18 +349,12 @@ void BasicGraphicsScene::onModelReset()
 void BasicGraphicsScene::onPortLayoutUpdated(PortLayout layout)
 {
     setOrientation(layout == QtNodes::PortLayout::Horizontal ? Qt::Horizontal : Qt::Vertical);
-
-    for (auto &[nodeId, nodes] : _nodeGraphicsObjects) {
-        nodes->moveConnections();
-        nodes->update();
-    }
+    updateAllNodes();
 }
 
 void BasicGraphicsScene::onStyleUpdated()
 {
-    for (auto &[nodeId, nodes] : _nodeGraphicsObjects) {
-        onNodeUpdated(nodeId);
-    }
+    updateAllNodes();
 }
 
 void BasicGraphicsScene::onFlagsUpdated(const NodeId nodeId)

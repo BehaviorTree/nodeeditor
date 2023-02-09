@@ -203,6 +203,7 @@ void DeleteCommand::undo()
 void DeleteCommand::redo()
 {
     deleteSerializedItems(_sceneJson, _scene->graphModel());
+
     Q_EMIT _scene->selectionRemoved();
 }
 
@@ -387,6 +388,7 @@ void DisconnectCommand::undo()
 void DisconnectCommand::redo()
 {
     _scene->graphModel().deleteConnection(_connId);
+
     Q_EMIT _scene->connectionRemoved();
 }
 
