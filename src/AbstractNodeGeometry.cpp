@@ -19,10 +19,16 @@ QRectF AbstractNodeGeometry::boundingRect(NodeId const nodeId) const
 {
     QSize s = size(nodeId);
 
-    double ratio = 0.20;
+    double ratio = 0.10;
 
     int widthMargin = s.width() * ratio;
     int heightMargin = s.height() * ratio;
+
+    auto const &nodeStyle = StyleCollection::nodeStyle();
+    int addon = 4 * nodeStyle.ConnectionPointDiameter;
+
+    widthMargin = std::max(addon, widthMargin);
+    heightMargin = std::max(addon, heightMargin);
 
     QMargins margins(widthMargin, heightMargin, widthMargin, heightMargin);
 
