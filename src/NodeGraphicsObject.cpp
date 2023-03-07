@@ -340,7 +340,7 @@ void NodeGraphicsObject::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
     QList<QGraphicsItem *> overlapItems = collidingItems();
 
     for (QGraphicsItem *item : overlapItems) {
-        if (item->zValue() > 0.0) {
+        if (item->zValue() > 0.0 && item->zValue() < 20) {
             item->setZValue(0.0);
         }
     }
