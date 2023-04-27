@@ -19,23 +19,8 @@ QRectF AbstractNodeGeometry::boundingRect(NodeId const nodeId) const
 {
     QSize s = size(nodeId);
 
-    double ratio = 0.10;
-
-    int widthMargin = s.width() * ratio;
-    int heightMargin = s.height() * ratio;
-
-    auto const &nodeStyle = StyleCollection::nodeStyle();
-    int addon = 4 * nodeStyle.ConnectionPointDiameter;
-
-    // should we use this according to geometry?
-    widthMargin = std::max(addon, widthMargin);
-    heightMargin = std::max(addon, heightMargin);
-
-    QMargins margins(widthMargin, heightMargin, widthMargin, heightMargin);
-
     QRectF r(QPointF(0, 0), s);
-
-    return r.marginsAdded(margins);
+    return r;
 }
 
 QPointF AbstractNodeGeometry::portScenePosition(NodeId const nodeId,

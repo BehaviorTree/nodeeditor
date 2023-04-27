@@ -2,6 +2,7 @@
 
 #include "AbstractGraphModel.hpp"
 #include "NodeData.hpp"
+#include "StyleCollection.hpp"
 
 #include <QPoint>
 #include <QRect>
@@ -21,6 +22,18 @@ DefaultHorizontalNodeGeometry::DefaultHorizontalNodeGeometry(AbstractGraphModel 
     _boldFontMetrics = QFontMetrics(f);
 
     _portSize = _fontMetrics.height();
+}
+
+QRectF DefaultHorizontalNodeGeometry::boundingRect(const NodeId nodeId) const
+{
+    auto r = AbstractNodeGeometry::boundingRect(nodeId);
+
+    auto const &nodeStyle = StyleCollection::nodeStyle();
+    int addon = nodeStyle.ConnectionPointDiameter * 1.2 + nodeStyle.HoveredPenWidth;
+
+    QMargins margins(addon, 0, addon, 0);
+
+    return r.marginsAdded(margins);
 }
 
 QSize DefaultHorizontalNodeGeometry::size(NodeId const nodeId) const
