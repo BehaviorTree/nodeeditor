@@ -320,6 +320,7 @@ void BasicGraphicsScene::onNodeUpdated(NodeId const nodeId)
     auto node = nodeGraphicsObject(nodeId);
 
     if (node) {
+        node->updateStyle();
         node->setGeometryChanged();
 
         _nodeGeometry->recomputeSize(nodeId);

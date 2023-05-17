@@ -33,22 +33,7 @@ NodeGraphicsObject::NodeGraphicsObject(BasicGraphicsScene &scene, NodeId nodeId)
 
     setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 
-    //    QJsonObject nodeStyleJson = _graphModel.nodeData(_nodeId, NodeRole::Style).toJsonObject();
-
-    //    NodeStyle nodeStyle(nodeStyleJson);
-
-    auto const &nodeStyle = StyleCollection::nodeStyle();
-
-    if (nodeStyle.ShadowColor != Qt::transparent) {
-        auto effect = new QGraphicsDropShadowEffect;
-        effect->setOffset(4, 4);
-        effect->setBlurRadius(20);
-        effect->setColor(nodeStyle.ShadowColor);
-
-        setGraphicsEffect(effect);
-    }
-
-    setOpacity(nodeStyle.Opacity);
+    updateStyle();
 
     setAcceptHoverEvents(true);
 
@@ -66,6 +51,8 @@ NodeGraphicsObject::NodeGraphicsObject(BasicGraphicsScene &scene, NodeId nodeId)
         if (_nodeId == nodeId)
             setLockedState();
     });
+
+    connect(&_graphModel, &AbstractGraphModel::styleUpdated, this, [this]() { updateStyle(); });
 }
 
 AbstractGraphModel &NodeGraphicsObject::graphModel() const
@@ -124,6 +111,28 @@ void NodeGraphicsObject::setLockedState()
     }
 
     update();
+}
+
+void NodeGraphicsObject::updateStyle()
+{
+    QJsonObject nodeStyleJson = _graphModel.nodeData(_nodeId, NodeRole::Style).toJsonObject();
+    NodeStyle nodeStyle(nodeStyleJson);
+
+    auto effect = dynamic_cast<QGraphicsDropShadowEffect *>(graphicsEffect());
+    if (nodeStyle.ShadowColor != Qt::transparent && effect == nullptr) {
+        effect = new QGraphicsDropShadowEffect;
+        effect->setOffset(0, 0);
+        effect->setBlurRadius(20);
+        setGraphicsEffect(effect);
+    }
+
+    if (nodeStyle.ShadowColor == Qt::transparent) {
+        setGraphicsEffect(nullptr);
+    } else {
+        effect->setColor(nodeStyle.ShadowColor);
+    }
+
+    setOpacity(nodeStyle.Opacity);
 }
 
 QRectF NodeGraphicsObject::boundingRect() const

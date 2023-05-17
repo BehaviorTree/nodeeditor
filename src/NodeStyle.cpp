@@ -73,7 +73,7 @@ void NodeStyle::setNodeStyle(QString jsonText)
 
 #define NODE_STYLE_WRITE_COLOR(values, variable) \
     { \
-        values[#variable] = variable.name(); \
+        values[#variable] = variable.name(QColor::NameFormat::HexArgb); \
     }
 
 #define NODE_STYLE_READ_FLOAT(values, variable) \
