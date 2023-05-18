@@ -122,7 +122,7 @@ void NodeGraphicsObject::updateStyle()
     if (nodeStyle.ShadowColor != Qt::transparent && effect == nullptr) {
         effect = new QGraphicsDropShadowEffect;
         effect->setOffset(0, 0);
-        effect->setBlurRadius(20);
+        effect->setBlurRadius(10);
         setGraphicsEffect(effect);
     }
 
