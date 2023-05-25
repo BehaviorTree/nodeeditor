@@ -119,6 +119,7 @@ void NodeGraphicsObject::updateStyle()
     NodeStyle nodeStyle(nodeStyleJson);
 
     auto effect = dynamic_cast<QGraphicsDropShadowEffect *>(graphicsEffect());
+    // creating shadow effect has negative impact on the performance.
     if (nodeStyle.ShadowColor != Qt::transparent && effect == nullptr) {
         effect = new QGraphicsDropShadowEffect;
         effect->setOffset(0, 0);

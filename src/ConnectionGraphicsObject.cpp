@@ -212,10 +212,10 @@ ConnectionStyle ConnectionGraphicsObject::connectionStyle() const
     // In real-time monitoring mode, the color of the connection should be the same
     // as the NormalBoundaryColor.
     // We recognize this case by the fact that nodeStyle and defaultStyle are different
-    if (defaultStyle.NormalBoundaryColor != nodeStyle.NormalBoundaryColor) {
+    if (defaultStyle.ConnectionPointColor != nodeStyle.ConnectionPointColor) {
         auto connectionJson = connectionStyle.toJson();
         auto connectionJsonObj = connectionJson["ConnectionStyle"].toObject();
-        connectionJsonObj["NormalColor"] = nodeStyle.NormalBoundaryColor.name();
+        connectionJsonObj["NormalColor"] = nodeStyle.ConnectionPointColor.name();
         connectionJson["ConnectionStyle"] = connectionJsonObj;
         connectionStyle.loadJson(connectionJson);
     }
