@@ -215,6 +215,12 @@ void GraphicsView::setScaleRange(double minimum, double maximum)
     setupScale(transform().m11());
 }
 
+void GraphicsView::getScaleRange(double &minimum, double &maximum)
+{
+    minimum = _scaleRange.minimum;
+    maximum = _scaleRange.maximum;
+}
+
 void GraphicsView::setScaleRange(ScaleRange range)
 {
     setScaleRange(range.minimum, range.maximum);

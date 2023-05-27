@@ -38,6 +38,8 @@ public:
 
     /// @brief max=0/min=0 indicates infinite zoom in/out
     void setScaleRange(double minimum = 0, double maximum = 0);
+    /// @brief max=0/min=0 indicates infinite zoom in/out
+    void getScaleRange(double &minimum, double &maximum);
 
     void setScaleRange(ScaleRange range);
 
