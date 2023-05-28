@@ -186,10 +186,10 @@ void NodeStyle::fromVariantMap(const QVariantMap &map)
     GradientColor1 = map.value("GradientColor1").value<QColor>();
     GradientColor2 = map.value("GradientColor2").value<QColor>();
     GradientColor3 = map.value("GradientColor3").value<QColor>();
+
     ShadowColor = map.value("ShadowColor").value<QColor>();
     FontColor = map.value("FontColor").value<QColor>();
     FontColorFaded = map.value("FontColorFaded").value<QColor>();
-
     ConnectionPointColor = map.value("ConnectionPointColor").value<QColor>();
     FilledConnectionPointColor = map.value("FilledConnectionPointColor").value<QColor>();
     WarningColor = map.value("WarningColor").value<QColor>();
@@ -211,8 +211,8 @@ QVariantMap NodeStyle::toVariantMap() const
     map["GradientColor2"] = GradientColor2;
     map["GradientColor3"] = GradientColor3;
 
-    map["GradientColor3"] = GradientColor3;
-    map["GradientColor3"] = GradientColor3;
+    map["ShadowColor"] = ShadowColor;
+    map["FontColor"] = FontColor;
     map["FontColorFaded"] = FontColorFaded;
     map["ConnectionPointColor"] = ConnectionPointColor;
     map["FilledConnectionPointColor"] = FilledConnectionPointColor;
