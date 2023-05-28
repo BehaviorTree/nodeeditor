@@ -12,6 +12,8 @@ class NODE_EDITOR_PUBLIC NodeStyle : public Style
 public:
     NodeStyle();
 
+    NodeStyle(const NodeStyle& other) = default;
+
     NodeStyle(QVariant const& variant);
 
     NodeStyle(QString jsonText);
