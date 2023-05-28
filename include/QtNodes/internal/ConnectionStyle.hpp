@@ -32,6 +32,10 @@ public:
     QColor selectedHaloColor() const;
     QColor hoveredColor() const;
 
+    void setNormalColor(QColor color) {
+        NormalColor = color;
+    }
+
     float lineWidth() const;
     float constructionLineWidth() const;
     float pointDiameter() const;

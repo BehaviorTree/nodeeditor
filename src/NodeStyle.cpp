@@ -27,6 +27,15 @@ NodeStyle::NodeStyle()
     loadJsonFile(":DefaultStyle.json");
 }
 
+NodeStyle::NodeStyle(const QVariant &style)
+{
+    if(style.userType() == QMetaType::QVariantMap)
+    {
+        loadJson(style.toJsonObject());
+    }
+    else *this = style.value<NodeStyle>();
+}
+
 NodeStyle::NodeStyle(QString jsonText)
 {
     loadJsonText(jsonText);
@@ -35,6 +44,30 @@ NodeStyle::NodeStyle(QString jsonText)
 NodeStyle::NodeStyle(QJsonObject const &json)
 {
     loadJson(json);
+}
+
+NodeStyle &NodeStyle::operator=(const NodeStyle &other) noexcept
+{
+    NormalBoundaryColor = other.NormalBoundaryColor;
+    SelectedBoundaryColor = other.SelectedBoundaryColor;
+    GradientColor0 = other.GradientColor0;
+    GradientColor1 = other.GradientColor1;
+    GradientColor2 = other.GradientColor2;
+    GradientColor3 = other.GradientColor3;
+    ShadowColor = other.ShadowColor;
+    FontColor = other.FontColor;
+    FontColorFaded = other.FontColorFaded;
+    ConnectionPointColor = other.ConnectionPointColor;
+    FilledConnectionPointColor = other.FilledConnectionPointColor;
+    WarningColor = other.WarningColor;
+    ErrorColor = other.ErrorColor;
+
+    PenWidth = other.PenWidth;
+    HoveredPenWidth = other.HoveredPenWidth;
+    ConnectionPointDiameter = other.ConnectionPointDiameter;
+    Opacity = other.Opacity;
+
+    return *this;
 }
 
 void NodeStyle::setNodeStyle(QString jsonText)
@@ -143,4 +176,53 @@ QJsonObject NodeStyle::toJson() const
     root["NodeStyle"] = obj;
 
     return root;
+}
+
+void NodeStyle::fromVariantMap(const QVariantMap &map)
+{
+    NormalBoundaryColor = map.value("NormalBoundaryColor").value<QColor>();
+    SelectedBoundaryColor = map.value("SelectedBoundaryColor").value<QColor>();
+    GradientColor0 = map.value("GradientColor0").value<QColor>();
+    GradientColor1 = map.value("GradientColor1").value<QColor>();
+    GradientColor2 = map.value("GradientColor2").value<QColor>();
+    GradientColor3 = map.value("GradientColor3").value<QColor>();
+    ShadowColor = map.value("ShadowColor").value<QColor>();
+    FontColor = map.value("FontColor").value<QColor>();
+    FontColorFaded = map.value("FontColorFaded").value<QColor>();
+
+    ConnectionPointColor = map.value("ConnectionPointColor").value<QColor>();
+    FilledConnectionPointColor = map.value("FilledConnectionPointColor").value<QColor>();
+    WarningColor = map.value("WarningColor").value<QColor>();
+    ErrorColor = map.value("ErrorColor").value<QColor>();
+
+    PenWidth = map.value("PenWidth").value<float>();
+    HoveredPenWidth = map.value("HoveredPenWidth").value<float>();
+    ConnectionPointDiameter = map.value("ConnectionPointDiameter").value<float>();
+    Opacity = map.value("Opacity").value<float>();
+}
+
+QVariantMap NodeStyle::toVariantMap() const
+{
+    QVariantMap map;
+    map["NormalBoundaryColor"] = NormalBoundaryColor;
+    map["SelectedBoundaryColor"] = SelectedBoundaryColor;
+    map["GradientColor0"] = GradientColor0;
+    map["GradientColor1"] = GradientColor1;
+    map["GradientColor2"] = GradientColor2;
+    map["GradientColor3"] = GradientColor3;
+
+    map["GradientColor3"] = GradientColor3;
+    map["GradientColor3"] = GradientColor3;
+    map["FontColorFaded"] = FontColorFaded;
+    map["ConnectionPointColor"] = ConnectionPointColor;
+    map["FilledConnectionPointColor"] = FilledConnectionPointColor;
+    map["WarningColor"] = WarningColor;
+    map["ErrorColor"] = ErrorColor;
+
+    map["PenWidth"] = PenWidth;
+    map["HoveredPenWidth"] = HoveredPenWidth;
+    map["ConnectionPointDiameter"] = ConnectionPointDiameter;
+    map["Opacity"] = Opacity;
+
+    return map;
 }

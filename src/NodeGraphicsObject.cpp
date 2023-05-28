@@ -115,8 +115,8 @@ void NodeGraphicsObject::setLockedState()
 
 void NodeGraphicsObject::updateStyle()
 {
-    QJsonObject nodeStyleJson = _graphModel.nodeData(_nodeId, NodeRole::Style).toJsonObject();
-    NodeStyle nodeStyle(nodeStyleJson);
+    const QVariant style = _graphModel.nodeData(_nodeId, NodeRole::Style);
+    NodeStyle nodeStyle(style);
 
     auto effect = dynamic_cast<QGraphicsDropShadowEffect *>(graphicsEffect());
     // creating shadow effect has negative impact on the performance.

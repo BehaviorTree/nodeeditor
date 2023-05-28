@@ -12,11 +12,15 @@ class NODE_EDITOR_PUBLIC NodeStyle : public Style
 public:
     NodeStyle();
 
+    NodeStyle(QVariant const& variant);
+
     NodeStyle(QString jsonText);
 
     NodeStyle(QJsonObject const &json);
 
     virtual ~NodeStyle() = default;
+
+    NodeStyle& operator=(const NodeStyle& other) noexcept;
 
 public:
     static void setNodeStyle(QString jsonText);
@@ -25,6 +29,10 @@ public:
     void loadJson(QJsonObject const &json) override;
 
     QJsonObject toJson() const override;
+
+    void fromVariantMap(QVariantMap const& map);
+
+    QVariantMap toVariantMap() const;
 
 public:
     QColor NormalBoundaryColor;
@@ -50,4 +58,7 @@ public:
 
     float Opacity;
 };
+
 } // namespace QtNodes
+
+Q_DECLARE_METATYPE(QtNodes::NodeStyle);

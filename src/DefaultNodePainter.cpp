@@ -44,9 +44,8 @@ void DefaultNodePainter::drawNodeRect(QPainter *painter, NodeGraphicsObject &ngo
 
     QSize size = geometry.size(nodeId);
 
-    QJsonDocument json = QJsonDocument::fromVariant(model.nodeData(nodeId, NodeRole::Style));
-
-    NodeStyle nodeStyle(json.object());
+    const QVariant style = model.nodeData(nodeId, NodeRole::Style);
+    NodeStyle nodeStyle(style);
 
     auto color = ngo.isSelected() ? nodeStyle.SelectedBoundaryColor : nodeStyle.NormalBoundaryColor;
 
@@ -80,8 +79,8 @@ void DefaultNodePainter::drawConnectionPoints(QPainter *painter, NodeGraphicsObj
     NodeId const nodeId = ngo.nodeId();
     AbstractNodeGeometry &geometry = ngo.nodeScene()->nodeGeometry();
 
-    QJsonDocument json = QJsonDocument::fromVariant(model.nodeData(nodeId, NodeRole::Style));
-    NodeStyle nodeStyle(json.object());
+    const QVariant style = model.nodeData(nodeId, NodeRole::Style);
+    NodeStyle nodeStyle(style);
 
     auto const &connectionStyle = StyleCollection::connectionStyle();
 
@@ -152,8 +151,8 @@ void DefaultNodePainter::drawFilledConnectionPoints(QPainter *painter, NodeGraph
     NodeId const nodeId = ngo.nodeId();
     AbstractNodeGeometry &geometry = ngo.nodeScene()->nodeGeometry();
 
-    QJsonDocument json = QJsonDocument::fromVariant(model.nodeData(nodeId, NodeRole::Style));
-    NodeStyle nodeStyle(json.object());
+    const QVariant style = model.nodeData(nodeId, NodeRole::Style);
+    NodeStyle nodeStyle(style);
 
     auto diameter = nodeStyle.ConnectionPointDiameter;
 
@@ -206,8 +205,8 @@ void DefaultNodePainter::drawNodeCaption(QPainter *painter, NodeGraphicsObject &
 
     QPointF position = geometry.captionPosition(nodeId);
 
-    QJsonDocument json = QJsonDocument::fromVariant(model.nodeData(nodeId, NodeRole::Style));
-    NodeStyle nodeStyle(json.object());
+    const QVariant style = model.nodeData(nodeId, NodeRole::Style);
+    NodeStyle nodeStyle(style);
 
     painter->setFont(f);
     painter->setPen(nodeStyle.FontColor);
@@ -223,8 +222,8 @@ void DefaultNodePainter::drawEntryLabels(QPainter *painter, NodeGraphicsObject &
     NodeId const nodeId = ngo.nodeId();
     AbstractNodeGeometry &geometry = ngo.nodeScene()->nodeGeometry();
 
-    QJsonDocument json = QJsonDocument::fromVariant(model.nodeData(nodeId, NodeRole::Style));
-    NodeStyle nodeStyle(json.object());
+    const QVariant style = model.nodeData(nodeId, NodeRole::Style);
+    NodeStyle nodeStyle(style);
 
     for (PortType portType : {PortType::Out, PortType::In}) {
         unsigned int n = model.nodeData<unsigned int>(nodeId,

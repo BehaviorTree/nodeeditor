@@ -205,19 +205,14 @@ ConnectionStyle ConnectionGraphicsObject::connectionStyle() const
 
     const auto &defaultStyle = StyleCollection::nodeStyle();
 
-    auto inNodeStyle = _graphModel.nodeData(_connectionId.inNodeId, NodeRole::Style);
-    QJsonDocument json = QJsonDocument::fromVariant(inNodeStyle);
-    NodeStyle nodeStyle(json.object());
+    const QVariant style = _graphModel.nodeData(_connectionId.inNodeId, NodeRole::Style);
+    NodeStyle nodeStyle(style);
 
     // In real-time monitoring mode, the color of the connection should be the same
     // as the NormalBoundaryColor.
     // We recognize this case by the fact that nodeStyle and defaultStyle are different
     if (defaultStyle.ConnectionPointColor != nodeStyle.ConnectionPointColor) {
-        auto connectionJson = connectionStyle.toJson();
-        auto connectionJsonObj = connectionJson["ConnectionStyle"].toObject();
-        connectionJsonObj["NormalColor"] = nodeStyle.ConnectionPointColor.name();
-        connectionJson["ConnectionStyle"] = connectionJsonObj;
-        connectionStyle.loadJson(connectionJson);
+        connectionStyle.setNormalColor(nodeStyle.ConnectionPointColor);
     }
     //-------------------------------------------
 
