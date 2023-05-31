@@ -33,7 +33,9 @@ NodeGraphicsObject::NodeGraphicsObject(BasicGraphicsScene &scene, NodeId nodeId)
 
     setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 
-    updateStyle();
+    // commented for performance
+    // since we are not using shadow and opacity no need to be called
+    // updateStyle();
 
     setAcceptHoverEvents(true);
 

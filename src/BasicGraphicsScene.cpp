@@ -320,7 +320,9 @@ void BasicGraphicsScene::onNodeUpdated(NodeId const nodeId)
     auto node = nodeGraphicsObject(nodeId);
 
     if (node) {
-        node->updateStyle();
+        // commented for performance
+        // since we are not using shadow and opacity no need to be called
+        // node->updateStyle();
         node->setGeometryChanged();
 
         _nodeGeometry->recomputeSize(nodeId);
