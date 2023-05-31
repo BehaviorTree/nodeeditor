@@ -51,8 +51,6 @@ NodeGraphicsObject::NodeGraphicsObject(BasicGraphicsScene &scene, NodeId nodeId)
         if (_nodeId == nodeId)
             setLockedState();
     });
-
-    connect(&_graphModel, &AbstractGraphModel::styleUpdated, this, [this]() { updateStyle(); });
 }
 
 AbstractGraphModel &NodeGraphicsObject::graphModel() const
