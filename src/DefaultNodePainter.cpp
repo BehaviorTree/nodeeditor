@@ -71,6 +71,15 @@ void DefaultNodePainter::drawNodeRect(QPainter *painter, NodeGraphicsObject &ngo
     double const radius = 3.0;
 
     painter->drawRoundedRect(boundary, radius, radius);
+
+    // if we are in particular occasion we use warning by setting the color different than the default
+    if (nodeStyle.WarningColor != QColor(128, 128, 0)) {
+        painter->save();
+        QPen p(QColor(nodeStyle.WarningColor), 2);
+        painter->setPen(p);
+        painter->drawRoundedRect(boundary.adjusted(2, 2, -2, -2), radius, radius);
+        painter->restore();
+    }
 }
 
 void DefaultNodePainter::drawConnectionPoints(QPainter *painter, NodeGraphicsObject &ngo) const
