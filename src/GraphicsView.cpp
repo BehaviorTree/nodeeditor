@@ -80,6 +80,7 @@ void GraphicsView::setScene(BasicGraphicsScene *scene)
         // setup actions
         delete _clearSelectionAction;
         _clearSelectionAction = new QAction(QStringLiteral("Clear Selection"), this);
+        _clearSelectionAction->setShortcutContext(Qt::ShortcutContext::WidgetShortcut);
         _clearSelectionAction->setShortcut(Qt::Key_Escape);
 
         connect(_clearSelectionAction, &QAction::triggered, scene, &QGraphicsScene::clearSelection);
