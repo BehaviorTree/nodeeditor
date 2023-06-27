@@ -75,9 +75,10 @@ void DefaultNodePainter::drawNodeRect(QPainter *painter, NodeGraphicsObject &ngo
     // if we are in particular occasion we use warning by setting the color different than the default
     if (nodeStyle.WarningColor != QColor(128, 128, 0)) {
         painter->save();
-        QPen p(QColor(nodeStyle.WarningColor), 2);
+        QPen p(nodeStyle.WarningColor, nodeStyle.PenWidth);
         painter->setPen(p);
-        painter->drawRoundedRect(boundary.adjusted(2, 2, -2, -2), radius, radius);
+        painter->setBrush(nodeStyle.WarningColor);
+        painter->drawRoundedRect(QRectF(0, 0, radius * 2, size.height()), radius, radius);
         painter->restore();
     }
 }
