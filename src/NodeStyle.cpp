@@ -48,6 +48,8 @@ NodeStyle::NodeStyle(QJsonObject const &json)
 
 NodeStyle &NodeStyle::operator=(const NodeStyle &other) noexcept
 {
+    DashedBoundary = other.DashedBoundary;
+
     NormalBoundaryColor = other.NormalBoundaryColor;
     SelectedBoundaryColor = other.SelectedBoundaryColor;
     GradientColor0 = other.GradientColor0;
@@ -121,11 +123,25 @@ void NodeStyle::setNodeStyle(QString jsonText)
         values[#variable] = variable; \
     }
 
+#define NODE_STYLE_READ_BOOL(values, variable) \
+    { \
+        auto valueRef = values[#variable]; \
+        NODE_STYLE_CHECK_UNDEFINED_VALUE(valueRef, variable) \
+        variable = valueRef.toString() == "true"; \
+    }
+
+#define NODE_STYLE_WRITE_BOOL(values, variable) \
+    { \
+        values[#variable] = variable ? "true" : "false"; \
+    }
+
 void NodeStyle::loadJson(QJsonObject const &json)
 {
     QJsonValue nodeStyleValues = json["NodeStyle"];
 
     QJsonObject obj = nodeStyleValues.toObject();
+
+    NODE_STYLE_READ_BOOL(obj, DashedBoundary);
 
     NODE_STYLE_READ_COLOR(obj, NormalBoundaryColor);
     NODE_STYLE_READ_COLOR(obj, SelectedBoundaryColor);
@@ -151,6 +167,8 @@ void NodeStyle::loadJson(QJsonObject const &json)
 QJsonObject NodeStyle::toJson() const
 {
     QJsonObject obj;
+
+    NODE_STYLE_WRITE_BOOL(obj, DashedBoundary);
 
     NODE_STYLE_WRITE_COLOR(obj, NormalBoundaryColor);
     NODE_STYLE_WRITE_COLOR(obj, SelectedBoundaryColor);
@@ -180,6 +198,8 @@ QJsonObject NodeStyle::toJson() const
 
 void NodeStyle::fromVariantMap(const QVariantMap &map)
 {
+    DashedBoundary = map.value("DashedBoundary").value<bool>();
+
     NormalBoundaryColor = map.value("NormalBoundaryColor").value<QColor>();
     SelectedBoundaryColor = map.value("SelectedBoundaryColor").value<QColor>();
     GradientColor0 = map.value("GradientColor0").value<QColor>();
@@ -204,6 +224,8 @@ void NodeStyle::fromVariantMap(const QVariantMap &map)
 QVariantMap NodeStyle::toVariantMap() const
 {
     QVariantMap map;
+    map["DashedBoundary"] = DashedBoundary;
+
     map["NormalBoundaryColor"] = NormalBoundaryColor;
     map["SelectedBoundaryColor"] = SelectedBoundaryColor;
     map["GradientColor0"] = GradientColor0;

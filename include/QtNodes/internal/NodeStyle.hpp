@@ -37,6 +37,8 @@ public:
     QVariantMap toVariantMap() const;
 
 public:
+    bool DashedBoundary;
+
     QColor NormalBoundaryColor;
     QColor SelectedBoundaryColor;
     QColor GradientColor0;

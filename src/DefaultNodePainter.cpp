@@ -48,14 +48,15 @@ void DefaultNodePainter::drawNodeRect(QPainter *painter, NodeGraphicsObject &ngo
     NodeStyle nodeStyle(style);
 
     auto color = ngo.isSelected() ? nodeStyle.SelectedBoundaryColor : nodeStyle.NormalBoundaryColor;
-
-    if (ngo.nodeState().hovered()) {
-        QPen p(color, nodeStyle.HoveredPenWidth);
-        painter->setPen(p);
-    } else {
-        QPen p(color, nodeStyle.PenWidth);
-        painter->setPen(p);
+    float width = ngo.nodeState().hovered() ? nodeStyle.HoveredPenWidth : nodeStyle.PenWidth;
+    QPen p(color, width);
+    p.setJoinStyle(Qt::RoundJoin);
+    if (nodeStyle.DashedBoundary) {
+        p.setCapStyle(Qt::RoundCap);
+        p.setStyle(Qt::PenStyle::DashLine);
+        p.setDashPattern({4 * width, 4 * width});
     }
+    painter->setPen(p);
 
     QLinearGradient gradient(QPointF(0.0, 0.0), QPointF(2.0, size.height()));
 
@@ -75,8 +76,7 @@ void DefaultNodePainter::drawNodeRect(QPainter *painter, NodeGraphicsObject &ngo
     const auto flags = model.nodeFlags(nodeId);
     if (flags.testFlag(SearchMatched)) {
         painter->save();
-        QPen p(nodeStyle.WarningColor, nodeStyle.PenWidth);
-        painter->setPen(p);
+        painter->setPen(QPen(nodeStyle.WarningColor, width));
         painter->setBrush(nodeStyle.WarningColor);
         painter->drawRoundedRect(QRectF(0, 0, radius * 2, size.height()), radius, radius);
         painter->restore();
