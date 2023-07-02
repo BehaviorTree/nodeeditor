@@ -47,13 +47,11 @@ void DefaultNodePainter::drawNodeRect(QPainter *painter, NodeGraphicsObject &ngo
     const QVariant style = model.nodeData(nodeId, NodeRole::Style);
     NodeStyle nodeStyle(style);
 
-    if(nodeStyle.GradientColor0 == nodeStyle.GradientColor1 &&
-       nodeStyle.GradientColor0 == nodeStyle.GradientColor2 &&
-       nodeStyle.GradientColor0 == nodeStyle.GradientColor3)
-    {
+    if (nodeStyle.GradientColor0 == nodeStyle.GradientColor1
+        && nodeStyle.GradientColor0 == nodeStyle.GradientColor2
+        && nodeStyle.GradientColor0 == nodeStyle.GradientColor3) {
         painter->setBrush(nodeStyle.GradientColor0);
-    }
-    else {
+    } else {
         QLinearGradient gradient(QPointF(0.0, 0.0), QPointF(2.0, size.height()));
         gradient.setColorAt(0.0, nodeStyle.GradientColor0);
         gradient.setColorAt(0.10, nodeStyle.GradientColor1);
@@ -66,36 +64,36 @@ void DefaultNodePainter::drawNodeRect(QPainter *painter, NodeGraphicsObject &ngo
     double const radius = 3.0;
 
     float width = ngo.nodeState().hovered() ? nodeStyle.HoveredPenWidth : nodeStyle.PenWidth;
-    if (nodeStyle.DashedBoundary) {
+    auto color = ngo.isSelected() ? nodeStyle.SelectedBoundaryColor : nodeStyle.NormalBoundaryColor;
+    QPen p(color, width);
+    p.setJoinStyle(Qt::RoundJoin);
+    painter->setPen(p);
+    painter->drawRoundedRect(boundary, radius, radius);
 
-        QPen p(nodeStyle.SelectedBoundaryColor.darker(), width);
-        painter->setPen(p);
-        painter->drawRoundedRect(boundary, radius, radius);
-
-        p.setColor(nodeStyle.NormalBoundaryColor);
+    if (nodeStyle.DashedBoundaryColor.alpha() != 0) {
+        painter->save();
+        p.setWidthF(nodeStyle.PenWidth);
+        p.setColor(nodeStyle.DashedBoundaryColor);
         p.setStyle(Qt::PenStyle::DashLine);
         p.setCapStyle(Qt::FlatCap);
         p.setDashPattern({4, 3});
         painter->setPen(p);
-        painter->drawRoundedRect(boundary.marginsRemoved({1.5, 1.5, 1.5, 1.5}), radius, radius);
-    }
-    else {
-        auto color = ngo.isSelected() ? nodeStyle.SelectedBoundaryColor : nodeStyle.NormalBoundaryColor;
-        QPen p(color, width);
-        p.setJoinStyle(Qt::RoundJoin);
-        painter->setPen(p);
-        painter->drawRoundedRect(boundary, radius, radius);
+        auto margin = nodeStyle.PenWidth * 1.5;
+        painter->drawRoundedRect(boundary.marginsRemoved({margin, margin, margin, margin}),
+                                 radius,
+                                 radius);
+        painter->restore();
     }
 
     const auto flags = model.nodeFlags(nodeId);
     if (flags.testFlag(SearchMatched)) {
         painter->save();
-        painter->setPen(QPen(nodeStyle.WarningColor, 1));
+        painter->setPen(QPen(nodeStyle.WarningColor, width));
         painter->setBrush(nodeStyle.WarningColor);
         QPolygonF triangle;
-        triangle.push_back({1, 1});
-        triangle.push_back({1, 14});
-        triangle.push_back({14, 1});
+        triangle.push_back({0, 0});
+        triangle.push_back({0, 18});
+        triangle.push_back({18, 0});
         painter->drawConvexPolygon(triangle);
         painter->restore();
     }
