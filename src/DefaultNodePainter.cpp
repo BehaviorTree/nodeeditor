@@ -71,14 +71,15 @@ void DefaultNodePainter::drawNodeRect(QPainter *painter, NodeGraphicsObject &ngo
     painter->drawRoundedRect(boundary, radius, radius);
 
     if (nodeStyle.DashedBoundaryColor.alpha() != 0) {
+        qreal dashWidth = nodeStyle.PenWidth * 2;
         painter->save();
-        p.setWidthF(nodeStyle.PenWidth);
+        p.setWidthF(dashWidth);
         p.setColor(nodeStyle.DashedBoundaryColor);
         p.setStyle(Qt::PenStyle::DashLine);
         p.setCapStyle(Qt::FlatCap);
         p.setDashPattern({4, 3});
         painter->setPen(p);
-        auto margin = nodeStyle.PenWidth * 1.5;
+        auto margin = dashWidth * 1.5;
         painter->drawRoundedRect(boundary.marginsRemoved({margin, margin, margin, margin}),
                                  radius,
                                  radius);
