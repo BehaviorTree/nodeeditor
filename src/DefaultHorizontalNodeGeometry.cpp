@@ -29,9 +29,10 @@ QRectF DefaultHorizontalNodeGeometry::boundingRect(const NodeId nodeId) const
     auto r = AbstractNodeGeometry::boundingRect(nodeId);
 
     auto const &nodeStyle = StyleCollection::nodeStyle();
-    int addon = nodeStyle.ConnectionPointDiameter * 1.2 + nodeStyle.HoveredPenWidth;
+    const float addonH = nodeStyle.HoveredPenWidth + nodeStyle.ConnectionPointDiameter;
+    const float addonV = nodeStyle.HoveredPenWidth + 1;
 
-    QMargins margins(addon, 0, addon, 0);
+    QMarginsF margins(addonH, addonV, addonH, addonV);
 
     return r.marginsAdded(margins);
 }

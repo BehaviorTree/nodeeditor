@@ -61,24 +61,26 @@ void DefaultNodePainter::drawNodeRect(QPainter *painter, NodeGraphicsObject &ngo
     }
 
     QRectF boundary(0, 0, size.width(), size.height());
-    double const radius = 3.0;
+    const float width = ngo.nodeState().hovered() ? nodeStyle.HoveredPenWidth : nodeStyle.PenWidth;
+    const double radius = 2.5 + nodeStyle.PenWidth / 2;
+    const QColor color = ngo.isSelected() ? nodeStyle.SelectedBoundaryColor
+                                          : nodeStyle.NormalBoundaryColor;
 
-    float width = ngo.nodeState().hovered() ? nodeStyle.HoveredPenWidth : nodeStyle.PenWidth;
-    auto color = ngo.isSelected() ? nodeStyle.SelectedBoundaryColor : nodeStyle.NormalBoundaryColor;
     QPen p(color, width);
     p.setJoinStyle(Qt::RoundJoin);
     painter->setPen(p);
     painter->drawRoundedRect(boundary, radius, radius);
 
     if (nodeStyle.DashedBoundaryColor.alpha() != 0) {
-        qreal dashWidth = nodeStyle.PenWidth * 2;
+        const qreal dashWidth = nodeStyle.PenWidth * 2;
+        const QColor dashColor = nodeStyle.DashedBoundaryColor;
         painter->save();
-        p.setWidthF(dashWidth);
-        p.setColor(nodeStyle.DashedBoundaryColor);
-        p.setStyle(Qt::PenStyle::DashLine);
-        p.setCapStyle(Qt::FlatCap);
-        p.setDashPattern({4, 3});
-        painter->setPen(p);
+        QPen dashPen(dashColor, dashWidth);
+        dashPen.setStyle(Qt::PenStyle::DashLine);
+        dashPen.setCapStyle(Qt::FlatCap);
+        dashPen.setJoinStyle(Qt::RoundJoin);
+        dashPen.setDashPattern({4, 3});
+        painter->setPen(dashPen);
         auto margin = dashWidth * 1.5;
         painter->drawRoundedRect(boundary.marginsRemoved({margin, margin, margin, margin}),
                                  radius,
