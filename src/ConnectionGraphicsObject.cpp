@@ -427,7 +427,11 @@ void ConnectionGraphicsObject::contextMenuEvent(QGraphicsSceneContextMenuEvent *
         return;
     }
 
-    Q_EMIT nodeScene()->connectionContextMenu(_connectionId, mapToScene(event->pos()));
+    if( _connectionId.inNodeId != InvalidNodeId &&
+        _connectionId.outNodeId != InvalidNodeId)
+    {
+        Q_EMIT nodeScene()->connectionContextMenu(_connectionId, mapToScene(event->pos()));
+    }
 }
 
 } // namespace QtNodes
