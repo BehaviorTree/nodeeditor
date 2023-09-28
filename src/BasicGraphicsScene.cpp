@@ -138,6 +138,7 @@ std::unique_ptr<ConnectionGraphicsObject> const &BasicGraphicsScene::makeDraftCo
 
 void BasicGraphicsScene::resetDraftConnection()
 {
+    Q_EMIT connectionReset();
     _draftConnection.reset();
 }
 

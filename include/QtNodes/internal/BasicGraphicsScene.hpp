@@ -140,6 +140,8 @@ Q_SIGNALS:
 
     void connectionAdded();
 
+    void connectionReset();
+
 private:
     /// @brief Creates Node and Connection graphics objects.
     /**
