@@ -71,7 +71,7 @@ public:
    * the construction of the new connection without attaching it to any
    * node.
    */
-    void resetDraftConnection();
+    void resetDraftConnection(bool proposeNewNode = false);
 
     /// Deletes all the nodes. Connections are removed automatically.
     void clearScene();
@@ -140,7 +140,7 @@ Q_SIGNALS:
 
     void connectionAdded();
 
-    void connectionReset();
+    void connectionReset(NodeId nodeId);
 
 private:
     /// @brief Creates Node and Connection graphics objects.
