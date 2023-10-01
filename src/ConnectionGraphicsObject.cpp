@@ -289,7 +289,7 @@ void ConnectionGraphicsObject::mouseReleaseEvent(QGraphicsSceneMouseEvent *event
     // If connection attempt was unsuccessful
     if (!wasConnected) {
         // Resulting unique_ptr is not used and automatically deleted.
-        nodeScene()->resetDraftConnection(true);
+        nodeScene()->resetDraftConnection();
     }
 }
 

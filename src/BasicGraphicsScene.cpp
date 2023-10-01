@@ -136,17 +136,14 @@ std::unique_ptr<ConnectionGraphicsObject> const &BasicGraphicsScene::makeDraftCo
     return _draftConnection;
 }
 
-void BasicGraphicsScene::resetDraftConnection(bool proposeNewNode)
+void BasicGraphicsScene::resetDraftConnection(bool connected)
 {
-    if (_draftConnection)
-    {
+    if (!connected && _draftConnection) {
         auto dc = _draftConnection->connectionId();
-        if (proposeNewNode)
-        {
-            Q_EMIT connectionReset(dc.outNodeId);
-        }
-        _draftConnection.reset();
+        auto point = _draftConnection->pos() + _draftConnection->endPoint(PortType::In);
+        Q_EMIT nodeInsertRequested(point, dc.outNodeId);
     }
+    _draftConnection.reset();
 }
 
 void BasicGraphicsScene::clearScene()

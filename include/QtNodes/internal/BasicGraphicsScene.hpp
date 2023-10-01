@@ -68,10 +68,10 @@ public:
     /// Deletes "draft" connection.
     /**
    * The function is called when user releases the mouse button during
-   * the construction of the new connection without attaching it to any
-   * node.
+   * the construction of the new connection
+   * connected should be true if attached it to any node.
    */
-    void resetDraftConnection(bool proposeNewNode = false);
+    void resetDraftConnection(bool connected = false);
 
     /// Deletes all the nodes. Connections are removed automatically.
     void clearScene();
@@ -140,7 +140,7 @@ Q_SIGNALS:
 
     void connectionAdded();
 
-    void connectionReset(NodeId nodeId);
+    void nodeInsertRequested(QPointF pos, NodeId outNodeId);
 
 private:
     /// @brief Creates Node and Connection graphics objects.

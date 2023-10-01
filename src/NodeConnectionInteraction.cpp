@@ -76,7 +76,7 @@ bool NodeConnectionInteraction::tryConnect() const
                                                             _ngo.nodeId(),
                                                             targetPortIndex);
 
-    _ngo.nodeScene()->resetDraftConnection();
+    _ngo.nodeScene()->resetDraftConnection(true);
 
     _ngo.nodeScene()->undoStack().push(new ConnectCommand(_ngo.nodeScene(), newConnectionId));
 
