@@ -218,6 +218,20 @@ std::vector<NodeId> BasicGraphicsScene::selectedNodes() const
     return result;
 }
 
+std::set<ConnectionId> BasicGraphicsScene::selectedConnections() const
+{
+    std::set<ConnectionId> result;
+
+    QList<QGraphicsItem *> graphicsItems = selectedItems();
+    for (QGraphicsItem *item : graphicsItems) {
+        if (auto cgo = qgraphicsitem_cast<ConnectionGraphicsObject *>(item)) {
+            result.insert(cgo->connectionId());
+        }
+    }
+
+    return result;
+}
+
 void BasicGraphicsScene::cleanupSceneMenu(QMenu *menu)
 {
     Q_UNUSED(menu);

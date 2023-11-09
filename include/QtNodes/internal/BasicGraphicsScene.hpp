@@ -6,6 +6,7 @@
 
 #include <functional>
 #include <memory>
+#include <set>
 #include <tuple>
 #include <unordered_map>
 
@@ -110,6 +111,7 @@ public:
     virtual void cleanupSceneMenu(QMenu *menu);
 
     std::vector<NodeId> selectedNodes() const;
+    std::set<ConnectionId> selectedConnections() const;
 
 Q_SIGNALS:
     void nodeMoved(NodeId const nodeId, QPointF const &newLocation);
