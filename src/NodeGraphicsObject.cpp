@@ -280,6 +280,8 @@ void NodeGraphicsObject::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             scene()->clearSelection();
 
         setSelected(true);
+
+        Q_EMIT nodeScene()->nodeSelected(_nodeId);
     }
 
     if (_nodeState.resizing()) {
@@ -341,7 +343,11 @@ void NodeGraphicsObject::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     // position connections precisely after fast node move
     moveConnections();
 
-    nodeScene()->nodeClicked(_nodeId);
+    if (isSelected()) {
+        Q_EMIT nodeScene()->nodeSelected(_nodeId);
+    }
+
+    Q_EMIT nodeScene()->nodeClicked(_nodeId);
 }
 
 void NodeGraphicsObject::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
