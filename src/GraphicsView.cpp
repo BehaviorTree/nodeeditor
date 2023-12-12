@@ -333,6 +333,10 @@ void GraphicsView::keyReleaseEvent(QKeyEvent *event)
 
 void GraphicsView::mousePressEvent(QMouseEvent *event)
 {
+    if (!itemAt(event->pos())) {
+        Q_EMIT voidPressed();
+    }
+
     QGraphicsView::mousePressEvent(event);
     if (event->button() == Qt::LeftButton) {
         _clickPos = mapToScene(event->pos());

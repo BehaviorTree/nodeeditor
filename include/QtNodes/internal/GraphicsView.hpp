@@ -63,6 +63,8 @@ public Q_SLOTS:
 Q_SIGNALS:
     void scaleChanged(double scale);
 
+    void voidPressed();
+
 protected:
     void contextMenuEvent(QContextMenuEvent *event) override;
 
