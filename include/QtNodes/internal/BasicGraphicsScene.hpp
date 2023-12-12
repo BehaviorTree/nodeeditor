@@ -113,6 +113,16 @@ public:
     std::vector<NodeId> selectedNodes() const;
     std::set<ConnectionId> selectedConnections() const;
 
+/**
+ * @brief BasicGraphicsScene::selectNode selects node with nodeId and
+ * clears current selection if keepCurrentSelection is false
+ * if no change needed nothing happens, otherwise
+ * it will cause emitting selectionChanged two times, once for clearing and once for selection
+ * @param nodeId
+ * @param keepCurrentSelection
+ */
+    void selectNode(NodeId const nodeId, bool keepCurrentSelection);
+
 Q_SIGNALS:
     void nodeMoved(NodeId const nodeId, QPointF const &newLocation);
 

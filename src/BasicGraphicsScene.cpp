@@ -232,6 +232,23 @@ std::set<ConnectionId> BasicGraphicsScene::selectedConnections() const
     return result;
 }
 
+void BasicGraphicsScene::selectNode(const NodeId nodeId, bool keepCurrentSelection)
+{
+    auto ngo = nodeGraphicsObject(nodeId);
+
+    // check if selection should not change and return
+    auto currentSelection = selectedItems();
+    if ((currentSelection.size() == 1 || keepCurrentSelection) && currentSelection.contains(ngo)) {
+        return;
+    }
+
+    if (!keepCurrentSelection) {
+        clearSelection();
+    }
+
+    ngo->setSelected(true);
+}
+
 void BasicGraphicsScene::cleanupSceneMenu(QMenu *menu)
 {
     Q_UNUSED(menu);
