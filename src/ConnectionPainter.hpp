@@ -4,18 +4,23 @@
 #include <QtGui/QPainterPath>
 
 #include "Definitions.hpp"
+#include "AbstractConnectionPainter.hpp"
 
 namespace QtNodes {
 
 class ConnectionGeometry;
 class ConnectionGraphicsObject;
 
-class ConnectionPainter
+/// Default connection painter implementation
+class DefaultConnectionPainter : public AbstractConnectionPainter
 {
 public:
-    static void paint(QPainter *painter, ConnectionGraphicsObject const &cgo);
+    void paint(QPainter *painter, ConnectionGraphicsObject const &cgo) const override;
 
-    static QPainterPath getPainterStroke(ConnectionGraphicsObject const &cgo);
+    QPainterPath getPainterStroke(ConnectionGraphicsObject const &cgo) const override;
 };
+
+// Backwards compatibility alias
+using ConnectionPainter = DefaultConnectionPainter;
 
 } // namespace QtNodes

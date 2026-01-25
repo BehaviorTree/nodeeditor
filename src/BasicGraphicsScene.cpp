@@ -1,8 +1,10 @@
 #include "BasicGraphicsScene.hpp"
 
+#include "AbstractConnectionPainter.hpp"
 #include "AbstractNodeGeometry.hpp"
 #include "ConnectionGraphicsObject.hpp"
 #include "ConnectionIdUtils.hpp"
+#include "ConnectionPainter.hpp"
 #include "DefaultHorizontalNodeGeometry.hpp"
 #include "DefaultNodePainter.hpp"
 #include "DefaultVerticalNodeGeometry.hpp"
@@ -36,6 +38,7 @@ BasicGraphicsScene::BasicGraphicsScene(AbstractGraphModel &graphModel, QObject *
     , _graphModel(graphModel)
     , _nodeGeometry(std::make_unique<DefaultHorizontalNodeGeometry>(_graphModel))
     , _nodePainter(std::make_unique<DefaultNodePainter>())
+    , _connectionPainter(std::make_unique<DefaultConnectionPainter>())
     , _nodeDrag(false)
     , _undoStack(new QUndoStack(this))
     , _orientation(Qt::Horizontal)
@@ -119,6 +122,16 @@ AbstractNodePainter &BasicGraphicsScene::nodePainter()
 void BasicGraphicsScene::setNodePainter(std::unique_ptr<AbstractNodePainter> newPainter)
 {
     _nodePainter = std::move(newPainter);
+}
+
+AbstractConnectionPainter &BasicGraphicsScene::connectionPainter()
+{
+    return *_connectionPainter;
+}
+
+void BasicGraphicsScene::setConnectionPainter(std::unique_ptr<AbstractConnectionPainter> newPainter)
+{
+    _connectionPainter = std::move(newPainter);
 }
 
 QUndoStack &BasicGraphicsScene::undoStack()

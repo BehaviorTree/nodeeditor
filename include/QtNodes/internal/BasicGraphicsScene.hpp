@@ -22,6 +22,7 @@ class QUndoStack;
 
 namespace QtNodes {
 
+class AbstractConnectionPainter;
 class AbstractGraphModel;
 class AbstractNodePainter;
 class ConnectionGraphicsObject;
@@ -51,6 +52,10 @@ public:
     AbstractNodePainter &nodePainter();
 
     void setNodePainter(std::unique_ptr<AbstractNodePainter> newPainter);
+
+    AbstractConnectionPainter &connectionPainter();
+
+    void setConnectionPainter(std::unique_ptr<AbstractConnectionPainter> newPainter);
 
     QUndoStack &undoStack();
 
@@ -203,6 +208,8 @@ private:
     std::unique_ptr<AbstractNodeGeometry> _nodeGeometry;
 
     std::unique_ptr<AbstractNodePainter> _nodePainter;
+
+    std::unique_ptr<AbstractConnectionPainter> _connectionPainter;
 
     bool _nodeDrag;
 

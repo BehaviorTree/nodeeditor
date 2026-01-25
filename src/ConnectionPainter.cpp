@@ -26,7 +26,7 @@ static QPainterPath cubicPath(ConnectionGraphicsObject const &connection)
     return cubic;
 }
 
-QPainterPath ConnectionPainter::getPainterStroke(ConnectionGraphicsObject const &connection)
+QPainterPath DefaultConnectionPainter::getPainterStroke(ConnectionGraphicsObject const &connection) const
 {
     auto cubic = cubicPath(connection);
 
@@ -136,36 +136,8 @@ static void drawNormalLine(QPainter *painter, ConnectionGraphicsObject const &cg
 
     auto const &connectionStyle = cgo.connectionStyle();
 
-    QColor normalColorOut = connectionStyle.normalColor();
-    QColor normalColorIn = connectionStyle.normalColor();
+    QColor normalColor = connectionStyle.normalColor();
     QColor selectedColor = connectionStyle.selectedColor();
-
-    bool useGradientColor = false;
-
-    AbstractGraphModel const &graphModel = cgo.graphModel();
-
-    if (connectionStyle.useDataDefinedColors()) {
-        using QtNodes::PortType;
-
-        auto const cId = cgo.connectionId();
-
-        auto dataTypeOut = graphModel
-                               .portData(cId.outNodeId,
-                                         PortType::Out,
-                                         cId.outPortIndex,
-                                         PortRole::DataType)
-                               .value<NodeDataType>();
-
-        auto dataTypeIn
-            = graphModel.portData(cId.inNodeId, PortType::In, cId.inPortIndex, PortRole::DataType)
-                  .value<NodeDataType>();
-
-        useGradientColor = (dataTypeOut.id != dataTypeIn.id);
-
-        normalColorOut = connectionStyle.normalColor(dataTypeOut.id);
-        normalColorIn = connectionStyle.normalColor(dataTypeIn.id);
-        selectedColor = normalColorOut.darker(200);
-    }
 
     // geometry
 
@@ -179,55 +151,21 @@ static void drawNormalLine(QPainter *painter, ConnectionGraphicsObject const &cg
     bool const selected = cgo.isSelected();
 
     auto cubic = cubicPath(cgo);
-    if (useGradientColor) {
-        painter->setBrush(Qt::NoBrush);
 
-        QColor cOut = normalColorOut;
-        if (selected)
-            cOut = cOut.darker(200);
-        p.setColor(cOut);
-        painter->setPen(p);
+    // Gradient coloring disabled for performance - use single color
+    p.setColor(normalColor);
 
-        unsigned int const segments = 60;
-
-        for (unsigned int i = 0ul; i < segments; ++i) {
-            double ratioPrev = double(i) / segments;
-            double ratio = double(i + 1) / segments;
-
-            if (i == segments / 2) {
-                QColor cIn = normalColorIn;
-                if (selected)
-                    cIn = cIn.darker(200);
-
-                p.setColor(cIn);
-                painter->setPen(p);
-            }
-            painter->drawLine(cubic.pointAtPercent(ratioPrev), cubic.pointAtPercent(ratio));
-        }
-
-        {
-            QIcon icon(":convert.png");
-
-            QPixmap pixmap = icon.pixmap(QSize(22, 22));
-            painter->drawPixmap(cubic.pointAtPercent(0.50)
-                                    - QPoint(pixmap.width() / 2, pixmap.height() / 2),
-                                pixmap);
-        }
-    } else {
-        p.setColor(normalColorOut);
-
-        if (selected) {
-            p.setColor(selectedColor);
-        }
-
-        painter->setPen(p);
-        painter->setBrush(Qt::NoBrush);
-
-        painter->drawPath(cubic);
+    if (selected) {
+        p.setColor(selectedColor);
     }
+
+    painter->setPen(p);
+    painter->setBrush(Qt::NoBrush);
+
+    painter->drawPath(cubic);
 }
 
-void ConnectionPainter::paint(QPainter *painter, ConnectionGraphicsObject const &cgo)
+void DefaultConnectionPainter::paint(QPainter *painter, ConnectionGraphicsObject const &cgo) const
 {
     drawHoveredOrSelected(painter, cgo);
 
